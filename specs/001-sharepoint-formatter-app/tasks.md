@@ -18,7 +18,7 @@ description: "Task list for SharePoint Formatter app"
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design requirements in `spec.md` and `plan.md`.
-- [ ] T002 [P] Add Monaco Editor, AJV, and the `idb` IndexedDB helper library to `package.json`.
+- [ ] T002 [P] Add Monaco Editor, AJV, and the `idb` IndexedDB helper library to `package.json` with explicit semver version ranges or minimum versions specified for each dependency.
 - [ ] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory.
 - [ ] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`.
 
