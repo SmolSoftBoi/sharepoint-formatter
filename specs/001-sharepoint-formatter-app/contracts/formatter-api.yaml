@@ -1,0 +1,185 @@
+openapi: 3.0.3
+info:
+  title: SharePoint Formatter Editor API (Client-side)
+  version: 1.0.0
+  description: |
+    Client-side service contract used by the editor UI for templates, validation,
+    preview rendering, and export generation. No network calls are required.
+servers:
+  - url: http://localhost
+paths:
+  /formatter/types:
+    get:
+      summary: List formatter types
+      responses:
+        "200":
+          description: Formatter types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FormatterType"
+  /formatter/templates:
+    get:
+      summary: List templates for a formatter type
+      parameters:
+        - in: query
+          name: formatterTypeId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Template"
+  /formatter/validate:
+    post:
+      summary: Validate formatting JSON
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationRequest"
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResult"
+  /formatter/preview:
+    post:
+      summary: Render preview output
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreviewRequest"
+      responses:
+        "200":
+          description: Preview render output
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreviewResult"
+  /formatter/export:
+    post:
+      summary: Generate export artifact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportRequest"
+      responses:
+        "200":
+          description: Export artifact
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportArtifact"
+components:
+  schemas:
+    FormatterType:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          example: column
+        name:
+          type: string
+          example: Column
+    Template:
+      type: object
+      required: [id, name, formatterTypeId, jsonDefinition]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        formatterTypeId:
+          type: string
+        jsonDefinition:
+          type: object
+    ValidationRequest:
+      type: object
+      required: [formatterTypeId, json]
+      properties:
+        formatterTypeId:
+          type: string
+        json:
+          type: object
+    ValidationResult:
+      type: object
+      required: [valid]
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
+    ValidationError:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        path:
+          type: string
+        hint:
+          type: string
+    PreviewRequest:
+      type: object
+      required: [formatterTypeId, json, sampleItem]
+      properties:
+        formatterTypeId:
+          type: string
+        json:
+          type: object
+        sampleItem:
+          $ref: "#/components/schemas/SampleListItem"
+    PreviewResult:
+      type: object
+      required: [html]
+      properties:
+        html:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    SampleListItem:
+      type: object
+      additionalProperties: true
+    ExportRequest:
+      type: object
+      required: [formatterTypeId, json, exportType]
+      properties:
+        formatterTypeId:
+          type: string
+        json:
+          type: object
+        exportType:
+          type: string
+          enum: [clipboard, download, sharepointSnippet]
+    ExportArtifact:
+      type: object
+      required: [exportType, content]
+      properties:
+        exportType:
+          type: string
+          enum: [clipboard, download, sharepointSnippet]
+        content:
+          type: string
