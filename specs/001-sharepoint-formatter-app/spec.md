@@ -11,7 +11,7 @@
 
 - Q: What level of validation is required? → A: Validate against the official SharePoint v2 formatting schema per formatter type.
 - Q: How should work be persisted locally? → A: Both auto-save in browser storage and user-initiated save.
-- Q: What preview fidelity is required? → A: High-fidelity preview that closely matches SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline, with reasonable tolerance for minor visual differences.
+- Q: What preview fidelity is required? → A: Pixel-perfect preview that matches SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline, with only negligible, reasonable tolerance for minor visual differences.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -85,7 +85,7 @@ Capture WHAT and WHY here; defer HOW to plan.md.
 - **FR-008**: The system MUST function without an account and without a network connection after initial load.
 - **FR-009**: The system MUST provide clear, example-driven error messages for SharePoint expressions.
 - **FR-010**: The system MUST auto-save work to local browser storage and also provide a user-initiated save action.
-- **FR-011**: The system MUST provide a high-fidelity preview output that closely matches SharePoint rendering for the selected formatter type in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline, with reasonable tolerance for minor visual differences.
+- **FR-011**: The system MUST provide a pixel-perfect preview output, targeting a visual match to SharePoint rendering for the selected formatter type in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline; negligible differences caused solely by browser rendering engines (for example, sub-pixel text anti-aliasing or device pixel density) are acceptable and are not considered failures of this requirement.
 
 **SharePoint v2 container mapping (reference)**
 

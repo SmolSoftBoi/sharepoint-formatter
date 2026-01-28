@@ -13,8 +13,8 @@
 - **Alternatives considered**: CodeMirror; simple textarea with manual validation.
 
 ### Rendering strategy
-- **Decision**: Client-side preview renderer supporting major elmTypes, styles, attributes, expressions, and actions with pixel-perfect fidelity goals.
-- **Rationale**: Enables offline previews without SharePoint dependency while honoring the requirement for pixel-perfect output.
+- **Decision**: Client-side preview renderer supporting major elmTypes, styles, attributes, expressions, and actions with high-fidelity rendering consistent with the reasonable tolerance for minor visual differences defined in spec.md.
+- **Rationale**: Enables offline previews without SharePoint dependency while aiming for SharePoint-like visual output, while explicitly allowing minor visual differences as permitted by spec.md.
 - **Alternatives considered**: Basic preview (structural only); embedding SharePoint iframe (requires network/access).
 
 ### Persistence

@@ -11,7 +11,7 @@ description: "Task list for SharePoint Formatter app"
 
 **Tests**: Tests are REQUIRED for core validation/serialization logic and requested for validator, schema loader, expression helpers, template generator.
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of the stories.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
