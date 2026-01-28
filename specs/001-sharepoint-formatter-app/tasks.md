@@ -17,10 +17,10 @@ description: "Task list for SharePoint Formatter app"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design requirements in `spec.md` and `plan.md`.
-- [ ] T002 [P] Add Monaco Editor, AJV, and the `idb` IndexedDB helper library to `package.json` with explicit semver version ranges or minimum versions specified for each dependency.
-- [ ] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory.
-- [ ] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`.
+- [x] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design requirements in `spec.md` and `plan.md`.
+- [x] T002 [P] Add Monaco Editor, AJV, and the `idb` IndexedDB helper library to `package.json` with explicit semver version ranges or minimum versions specified for each dependency.
+- [x] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory.
+- [x] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`.
 
 ---
 
@@ -28,17 +28,17 @@ description: "Task list for SharePoint Formatter app"
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [ ] T005 Define formatter types and shared models in `app/lib/formatters/types.ts`.
-- [ ] T006 [P] Add SharePoint v2 schemas in `app/schemas/sharepoint-v2/*.json` and index in `app/schemas/sharepoint-v2/index.ts`.
-- [ ] T007 [P] Implement schema loader in `app/lib/validation/schemaLoader.ts`.
-- [ ] T008 Implement AJV validator service in `app/lib/validation/validator.ts`.
-- [ ] T009 [P] Implement expression helper utilities in `app/lib/expressions/expressionHelpers.ts`.
-- [ ] T010 Implement local persistence (auto-save + drafts) in `app/lib/persistence/storage.ts`.
-- [ ] T011 [P] Implement editor state store in `app/editor/state/editorStore.ts`.
-- [ ] T012 [P] Create template catalog data in `app/templates/catalog/templates.ts`.
-- [ ] T013 [P] Create guided pattern definitions in `app/templates/catalog/guidedPatterns.ts`.
-- [ ] T014 [P] Define sample list item presets in `app/editor/state/sampleData.ts`.
-- [ ] T015 Implement preview renderer core in `app/preview/renderer/render.ts`.
+- [x] T005 Define formatter types and shared models in `app/lib/formatters/types.ts`.
+- [x] T006 [P] Add SharePoint v2 schemas in `app/schemas/sharepoint-v2/*.json` and index in `app/schemas/sharepoint-v2/index.ts`.
+- [x] T007 [P] Implement schema loader in `app/lib/validation/schemaLoader.ts`.
+- [x] T008 Implement AJV validator service in `app/lib/validation/validator.ts`.
+- [x] T009 [P] Implement expression helper utilities in `app/lib/expressions/expressionHelpers.ts`.
+- [x] T010 Implement local persistence (auto-save + drafts) in `app/lib/persistence/storage.ts`.
+- [x] T011 [P] Implement editor state store in `app/editor/state/editorStore.ts`.
+- [x] T012 [P] Create template catalog data in `app/templates/catalog/templates.ts`.
+- [x] T013 [P] Create guided pattern definitions in `app/templates/catalog/guidedPatterns.ts`.
+- [x] T014 [P] Define sample list item presets in `app/editor/state/sampleData.ts`.
+- [x] T015 Implement preview renderer core in `app/preview/renderer/render.ts`.
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -52,17 +52,17 @@ description: "Task list for SharePoint Formatter app"
 
 ### Tests for User Story 1
 
-- [ ] T016 [P] [US1] Unit test template catalog integrity in `tests/unit/templates/templateCatalog.test.ts`.
+- [x] T016 [P] [US1] Unit test template catalog integrity in `tests/unit/templates/templateCatalog.test.ts`.
 
 ### Implementation for User Story 1
 
-- [ ] T017 [P] [US1] Build formatter type selector panel in `app/editor/panels/FormatterTypePanel.tsx`.
-- [ ] T018 [P] [US1] Build template selector panel in `app/editor/panels/TemplatePanel.tsx`.
-- [ ] T019 [P] [US1] Build sample data editor panel in `app/editor/panels/SampleDataPanel.tsx`.
-- [ ] T020 [P] [US1] Build preview pane UI in `app/preview/components/PreviewPane.tsx`.
-- [ ] T021 [US1] Wire template selection to JSON state in `app/editor/state/editorStore.ts`.
-- [ ] T022 [US1] Connect preview pane to renderer in `app/preview/components/PreviewPane.tsx`.
-- [ ] T023 [US1] Compose left nav + split view layout in `app/page.tsx`.
+- [x] T017 [P] [US1] Build formatter type selector panel in `app/editor/panels/FormatterTypePanel.tsx`.
+- [x] T018 [P] [US1] Build template selector panel in `app/editor/panels/TemplatePanel.tsx`.
+- [x] T019 [P] [US1] Build sample data editor panel in `app/editor/panels/SampleDataPanel.tsx`.
+- [x] T020 [P] [US1] Build preview pane UI in `app/preview/components/PreviewPane.tsx`.
+- [x] T021 [US1] Wire template selection to JSON state in `app/editor/state/editorStore.ts`.
+- [x] T022 [US1] Connect preview pane to renderer in `app/preview/components/PreviewPane.tsx`.
+- [x] T023 [US1] Compose left nav + split view layout in `app/page.tsx`.
 
 **Checkpoint**: User Story 1 functional and independently testable
 

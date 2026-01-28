@@ -1,0 +1,24 @@
+import { renderPreview } from "../renderer/render";
+
+interface PreviewPaneProps {
+  json: unknown;
+  sampleData: Record<string, unknown>;
+}
+
+export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
+  const { html, warnings } = renderPreview(json, sampleData);
+
+  return (
+    <section>
+      <h2>Preview</h2>
+      {warnings.length > 0 && (
+        <ul>
+          {warnings.map((warning) => (
+            <li key={warning}>{warning}</li>
+          ))}
+        </ul>
+      )}
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+    </section>
+  );
+};
