@@ -73,6 +73,12 @@ body {
   margin-top: 8px;
 }
 
+.export-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .editor-preview section + section {
   margin-top: 16px;
 }

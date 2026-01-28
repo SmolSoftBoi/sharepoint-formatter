@@ -102,12 +102,12 @@ description: "Task list for SharePoint Formatter app"
 
 ### Implementation for User Story 3
 
-- [ ] T034 [P] [US3] Implement export helpers in `app/lib/export/exporters.ts`.
-- [ ] T035 [P] [US3] Implement SharePoint-ready snippet generator in `app/lib/export/sharepointSnippet.ts`.
-- [ ] T036 [P] [US3] Add export panel actions in `app/editor/panels/ExportPanel.tsx`.
-- [ ] T037 [P] [US3] Add user-initiated save action in `app/editor/components/SaveDraftButton.tsx`.
-- [ ] T038 [US3] Wire export + save actions into editor state in `app/editor/state/editorStore.ts`.
-- [ ] T039 [P] [US3] Unit test export helpers and snippet generation in `tests/unit/export/exporters.test.ts`.
+- [x] T034 [P] [US3] Implement export helpers in `app/lib/export/exporters.ts`.
+- [x] T035 [P] [US3] Implement SharePoint-ready snippet generator in `app/lib/export/sharepointSnippet.ts`.
+- [x] T036 [P] [US3] Add export panel actions in `app/editor/panels/ExportPanel.tsx`.
+- [x] T037 [P] [US3] Add user-initiated save action in `app/editor/components/SaveDraftButton.tsx`.
+- [x] T038 [US3] Wire export + save actions into editor state in `app/editor/state/editorStore.ts`.
+- [x] T039 [P] [US3] Unit test export helpers and snippet generation in `tests/unit/export/exporters.test.ts`.
 
 **Checkpoint**: All user stories functional and independently testable
 

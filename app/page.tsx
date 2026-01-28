@@ -8,6 +8,8 @@ import { GuidedPatternPanel } from "./editor/panels/GuidedPatternPanel";
 import { JsonEditor } from "./editor/components/JsonEditor";
 import { ValidationPanel } from "./editor/components/ValidationPanel";
 import { ExpressionReference } from "./editor/components/ExpressionReference";
+import { ExportPanel } from "./editor/panels/ExportPanel";
+import { SaveDraftButton } from "./editor/components/SaveDraftButton";
 import { PreviewPane } from "./preview/components/PreviewPane";
 import { TEMPLATE_CATALOG } from "./templates/catalog/templates";
 import { SAMPLE_DATA_PRESETS } from "./editor/state/sampleData";
@@ -65,6 +67,7 @@ export default function HomePage() {
           sampleData={editorState.sampleData}
           onUpdate={setSampleData}
         />
+        <SaveDraftButton />
       </aside>
       <section className="editor-preview">
         <JsonEditor
@@ -75,6 +78,10 @@ export default function HomePage() {
         <ValidationPanel
           parseError={editorState.parseError}
           errors={editorState.validationErrors}
+        />
+        <ExportPanel
+          formatterTypeId={editorState.formatterTypeId}
+          json={editorState.json}
         />
         <PreviewPane json={editorState.json} sampleData={editorState.sampleData} />
       </section>
