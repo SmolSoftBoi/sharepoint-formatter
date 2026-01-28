@@ -11,7 +11,7 @@
 
 - Q: What level of validation is required? → A: Validate against official SharePoint formatting schema per formatter type.
 - Q: How should work be persisted locally? → A: Both auto-save in browser storage and user-initiated save.
-- Q: What preview fidelity is required? → A: High-fidelity preview closely matching SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline.
+- Q: What preview fidelity is required? → A: Pixel-perfect preview matching SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline.
 
 ## User Scenarios & Testing *(mandatory)*
 

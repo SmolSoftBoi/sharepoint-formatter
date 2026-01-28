@@ -17,7 +17,7 @@ description: "Task list for SharePoint Formatter app"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Next.js 16 app with TypeScript strict mode enabled (`compilerOptions.strict: true` in `tsconfig.json`) in `package.json`, `tsconfig.json`, `app/layout.tsx`, `app/page.tsx`
+- [ ] T001 Initialize Next.js 16 app with TypeScript strict mode enabled (`compilerOptions.strict: true` in `tsconfig.json`), creating `package.json`, `tsconfig.json`, `app/layout.tsx`, `app/page.tsx`
 - [ ] T002 [P] Add Monaco Editor, AJV, and IndexedDB helpers to `package.json`
 - [ ] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory
 - [ ] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`
@@ -191,6 +191,6 @@ Task: "Unit test expression helpers in tests/unit/expressions/expressionHelpers.
 
 ## Notes
 
-- [P] tasks = different files, no dependencies
+- Tasks marked with [P] can be implemented in parallel because they affect different files and have no interdependencies.
 - Each user story can be delivered independently after foundational work
 - Tests for validator, schema loader, expression helpers, and templates are required
