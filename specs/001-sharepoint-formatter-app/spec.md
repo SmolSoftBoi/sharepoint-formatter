@@ -11,7 +11,7 @@
 
 - Q: What level of validation is required? → A: Validate against the official SharePoint v2 formatting schema per formatter type.
 - Q: How should work be persisted locally? → A: Both auto-save in browser storage and user-initiated save.
-- Q: What preview fidelity is required? → A: Pixel-perfect preview that matches SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline, with only the following tolerances for visual differences: spacing and alignment may differ by at most ±2 CSS pixels; font anti-aliasing and subpixel rendering may differ between browsers/OS; native scrollbars, focus rings, and selection highlights may follow the host OS/browser style; there must be no perceptible differences in layout structure, relative element positioning, or color values at 100% zoom.
+- Q: What preview fidelity is required? → A: High-fidelity preview that closely matches SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -85,7 +85,7 @@ Capture WHAT and WHY here; defer HOW to plan.md.
 - **FR-008**: The system MUST function without an account and without a network connection after initial load.
 - **FR-009**: The system MUST provide clear, example-driven error messages for SharePoint expressions.
 - **FR-010**: The system MUST auto-save work to local browser storage and also provide a user-initiated save action.
-- **FR-011**: The system MUST provide a pixel-perfect preview output, targeting a visual match to SharePoint rendering for the selected formatter type in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline; only negligible differences caused solely by browser or operating-system rendering behavior are acceptable, where “negligible” means: (a) positional or size differences of rendered elements of no more than ±1 CSS pixel in any direction, (b) font rendering differences limited to sub-pixel anti-aliasing and hinting that do not change the chosen font family or the nominal font size/weight by more than ±0.5 CSS pixels or one weight step, and (c) color differences small enough that side-by-side comparison shows no clearly perceptible change in hue or contrast (for example, differences within typical sRGB anti-aliasing or device pixel density behavior); any deviation beyond these tolerances is considered a failure of this requirement.
+- **FR-011**: The system MUST provide high-fidelity preview output that closely matches SharePoint rendering for the selected formatter type in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline.
 
 **SharePoint v2 container mapping (reference)**
 

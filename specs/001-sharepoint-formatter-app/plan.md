@@ -27,6 +27,16 @@ Build an offline-first SharePoint formatter editor that supports type selection,
 **Constraints**: Offline-first, no account required, pixel-perfect preview target  
 **Scale/Scope**: Single feature app with editor, preview, templates, and export flows
 
+### Preview Fidelity Tolerances
+
+The preview renderer should match SharePoint rendering closely in the latest stable Edge and Chrome. Acceptable visual differences are limited to browser/OS rendering variations:
+
+- Spacing/alignment differences no greater than ±1 CSS pixel in any direction.
+- Font rendering differences limited to sub-pixel anti-aliasing and hinting, without changing the chosen font family or nominal font size/weight beyond ±0.5 CSS pixels or one weight step.
+- Color differences limited to imperceptible shifts consistent with sRGB anti-aliasing or device pixel density behavior.
+
+Any deviation beyond these tolerances should be treated as a preview fidelity defect.
+
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
