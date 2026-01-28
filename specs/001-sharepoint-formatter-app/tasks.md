@@ -18,7 +18,7 @@ description: "Task list for SharePoint Formatter app"
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design requirements in `spec.md` and `plan.md`.
-- [ ] T002 [P] Add Monaco Editor, AJV, and IndexedDB helpers to `package.json`
+- [ ] T002 [P] Add Monaco Editor, AJV, and the `idb` IndexedDB helper library to `package.json`
 - [ ] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory
 - [ ] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`
 
@@ -34,7 +34,7 @@ description: "Task list for SharePoint Formatter app"
 - [ ] T008 Implement AJV validator service in `app/lib/validation/validator.ts`
 - [ ] T009 [P] Implement expression helper utilities in `app/lib/expressions/expressionHelpers.ts`
 - [ ] T010 Implement local persistence (auto-save + drafts) in `app/lib/persistence/storage.ts`
-- [ ] T011 Implement editor state store in `app/editor/state/editorStore.ts`
+- [ ] T011 [P] Implement editor state store in `app/editor/state/editorStore.ts`
 - [ ] T012 [P] Create template catalog data in `app/templates/catalog/templates.ts`
 - [ ] T013 [P] Create guided pattern definitions in `app/templates/catalog/guidedPatterns.ts`
 - [ ] T014 [P] Define sample list item presets in `app/editor/state/sampleData.ts`
