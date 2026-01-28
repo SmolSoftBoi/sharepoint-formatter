@@ -119,7 +119,7 @@ description: "Task list for SharePoint Formatter app"
 
 - [ ] T040 [P] Add keyboard focus styles and ARIA labels in `app/styles/accessibility.css` and `app/editor/components/*.tsx`
 - [ ] T041 [P] Add offline status indicator in `app/editor/components/OfflineStatus.tsx`
-- [ ] T042 [P] Add offline caching strategy and verification in `app/lib/persistence/offlineCache.ts`, `app/layout.tsx` (acceptance: core editor, validation, and preview work after disabling network post-initial-load; verification: perform a manual offline smoke test from `quickstart.md`)
+- [ ] T042 [P] Add offline caching strategy and verification in `app/lib/persistence/offlineCache.ts`, `app/layout.tsx` (acceptance: core editor, validation, and preview work after disabling network post-initial-load; verification: add an automated offline smoke test in `tests/integration/offline.spec.ts` and perform a manual offline smoke test from `quickstart.md`)
 - [ ] T043 Performance tune preview rendering in `app/preview/renderer/render.ts`
 - [ ] T044 Run quickstart workflow validation and update notes in `specs/001-sharepoint-formatter-app/quickstart.md`
 
