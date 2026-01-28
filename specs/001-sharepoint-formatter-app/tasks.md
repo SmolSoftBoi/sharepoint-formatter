@@ -76,19 +76,19 @@ description: "Task list for SharePoint Formatter app"
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Unit test schema loader in `tests/unit/schemas/schemaLoader.test.ts`.
-- [ ] T025 [P] [US2] Unit test AJV validator in `tests/unit/validation/validator.test.ts`.
-- [ ] T026 [P] [US2] Unit test expression helpers in `tests/unit/expressions/expressionHelpers.test.ts`.
+- [x] T024 [P] [US2] Unit test schema loader in `tests/unit/schemas/schemaLoader.test.ts`.
+- [x] T025 [P] [US2] Unit test AJV validator in `tests/unit/validation/validator.test.ts`.
+- [x] T026 [P] [US2] Unit test expression helpers in `tests/unit/expressions/expressionHelpers.test.ts`.
 
 ### Implementation for User Story 2
 
-- [ ] T027 [P] [US2] Implement JSON sanitization helper in `app/lib/validation/sanitizeJson.ts`.
-- [ ] T028 [P] [US2] Add Monaco JSON editor component in `app/editor/components/JsonEditor.tsx`.
-- [ ] T029 [P] [US2] Add validation errors panel in `app/editor/components/ValidationPanel.tsx`.
-- [ ] T030 [P] [US2] Add guided pattern panel in `app/editor/panels/GuidedPatternPanel.tsx`.
-- [ ] T031 [P] [US2] Add expression examples reference in `app/lib/expressions/examples.ts` and `app/editor/components/ExpressionReference.tsx`.
-- [ ] T032 [US2] Wire validation + hints into editor state in `app/editor/state/editorStore.ts`.
-- [ ] T033 [US2] Connect guided patterns to JSON updates in `app/editor/state/editorStore.ts`.
+- [x] T027 [P] [US2] Implement JSON sanitization helper in `app/lib/validation/sanitizeJson.ts`.
+- [x] T028 [P] [US2] Add Monaco JSON editor component in `app/editor/components/JsonEditor.tsx`.
+- [x] T029 [P] [US2] Add validation errors panel in `app/editor/components/ValidationPanel.tsx`.
+- [x] T030 [P] [US2] Add guided pattern panel in `app/editor/panels/GuidedPatternPanel.tsx`.
+- [x] T031 [P] [US2] Add expression examples reference in `app/lib/expressions/examples.ts` and `app/editor/components/ExpressionReference.tsx`.
+- [x] T032 [US2] Wire validation + hints into editor state in `app/editor/state/editorStore.ts`.
+- [x] T033 [US2] Connect guided patterns to JSON updates in `app/editor/state/editorStore.ts`.
 
 **Checkpoint**: User Stories 1 and 2 functional and independently testable
 

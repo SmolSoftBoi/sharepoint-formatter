@@ -4,12 +4,17 @@ import { useEffect } from "react";
 import { FormatterTypePanel } from "./editor/panels/FormatterTypePanel";
 import { TemplatePanel } from "./editor/panels/TemplatePanel";
 import { SampleDataPanel } from "./editor/panels/SampleDataPanel";
+import { GuidedPatternPanel } from "./editor/panels/GuidedPatternPanel";
+import { JsonEditor } from "./editor/components/JsonEditor";
+import { ValidationPanel } from "./editor/components/ValidationPanel";
+import { ExpressionReference } from "./editor/components/ExpressionReference";
 import { PreviewPane } from "./preview/components/PreviewPane";
 import { TEMPLATE_CATALOG } from "./templates/catalog/templates";
 import { SAMPLE_DATA_PRESETS } from "./editor/state/sampleData";
 import {
   setFormatterType,
   setJson,
+  setJsonParseError,
   setSampleData,
   setTemplateId,
   useEditorState,
@@ -48,12 +53,29 @@ export default function HomePage() {
           selectedId={editorState.templateId}
           onSelect={handleTemplateSelect}
         />
+        <GuidedPatternPanel
+          formatterTypeId={editorState.formatterTypeId}
+          onApply={(pattern, values) => {
+            setTemplateId(undefined);
+            setJson(pattern.outputTransform(values));
+          }}
+        />
+        <ExpressionReference />
         <SampleDataPanel
           sampleData={editorState.sampleData}
           onUpdate={setSampleData}
         />
       </aside>
       <section className="editor-preview">
+        <JsonEditor
+          value={editorState.json}
+          onValidJson={setJson}
+          onParseError={setJsonParseError}
+        />
+        <ValidationPanel
+          parseError={editorState.parseError}
+          errors={editorState.validationErrors}
+        />
         <PreviewPane json={editorState.json} sampleData={editorState.sampleData} />
       </section>
     </div>

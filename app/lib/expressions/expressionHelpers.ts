@@ -15,6 +15,16 @@ export const COMMON_EXPRESSION_HINTS: ExpressionHint[] = [
 ];
 
 export const extractFieldReferences = (expression: string): string[] => {
-  const matches = expression.match(/\[(?:\"|')([A-Za-z0-9_ ]+)(?:\"|')\]/g) ?? [];
-  return matches.map((match) => match.replace(/\[|\]|\"|'/g, "")).filter(Boolean);
+  const regex = /\[(?:\"|')?([A-Za-z0-9_$ ]+)(?:\"|')?\]/g;
+  const results: string[] = [];
+  let match: RegExpExecArray | null = null;
+
+  while ((match = regex.exec(expression)) !== null) {
+    const value = match[1]?.trim();
+    if (value) {
+      results.push(value);
+    }
+  }
+
+  return results;
 };

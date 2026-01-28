@@ -60,6 +60,23 @@ body {
   margin-top: 16px;
 }
 
+.editor-nav ul {
+  list-style: none;
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.editor-nav label {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.editor-preview section + section {
+  margin-top: 16px;
+}
+
 button {
   cursor: pointer;
   background: #f1f3f9;
@@ -74,4 +91,12 @@ textarea {
   border: 1px solid #d6dbe7;
   padding: 8px;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.json-editor {
+  min-height: 260px;
+  border: 1px solid #d6dbe7;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
 }
