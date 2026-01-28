@@ -17,7 +17,7 @@ description: "Task list for SharePoint Formatter app"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design documents.
+- [ ] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design requirements in `spec.md` and `plan.md`.
 - [ ] T002 [P] Add Monaco Editor, AJV, and IndexedDB helpers to `package.json`
 - [ ] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory
 - [ ] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`
@@ -154,10 +154,10 @@ description: "Task list for SharePoint Formatter app"
 ## Parallel Example: User Story 1
 
 ```bash
-Task: "Build formatter type selector panel in app/editor/panels/FormatterTypePanel.tsx"
-Task: "Build template selector panel in app/editor/panels/TemplatePanel.tsx"
-Task: "Build sample data editor panel in app/editor/panels/SampleDataPanel.tsx"
-Task: "Build preview pane UI in app/preview/components/PreviewPane.tsx"
+T017 [P] [US1] Build formatter type selector panel in app/editor/panels/FormatterTypePanel.tsx
+T018 [P] [US1] Build template selector panel in app/editor/panels/TemplatePanel.tsx
+T019 [P] [US1] Build sample data editor panel in app/editor/panels/SampleDataPanel.tsx
+T020 [P] [US1] Build preview pane UI in app/preview/components/PreviewPane.tsx
 ```
 
 ---
@@ -165,9 +165,9 @@ Task: "Build preview pane UI in app/preview/components/PreviewPane.tsx"
 ## Parallel Example: User Story 2
 
 ```bash
-Task: "Unit test schema loader in tests/unit/schemas/schemaLoader.test.ts"
-Task: "Unit test AJV validator in tests/unit/validation/validator.test.ts"
-Task: "Unit test expression helpers in tests/unit/expressions/expressionHelpers.test.ts"
+T024 [P] [US2] Unit test schema loader in tests/unit/schemas/schemaLoader.test.ts
+T025 [P] [US2] Unit test AJV validator in tests/unit/validation/validator.test.ts
+T026 [P] [US2] Unit test expression helpers in tests/unit/expressions/expressionHelpers.test.ts
 ```
 
 ---
