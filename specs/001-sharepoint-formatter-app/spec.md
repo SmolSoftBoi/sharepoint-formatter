@@ -9,7 +9,7 @@
 
 ### Session 2026-01-27
 
-- Q: What level of validation is required? → A: Validate against official SharePoint formatting schema per formatter type.
+- Q: What level of validation is required? → A: Validate against the official SharePoint v2 formatting schema per formatter type.
 - Q: How should work be persisted locally? → A: Both auto-save in browser storage and user-initiated save.
 - Q: What preview fidelity is required? → A: High-fidelity preview that closely matches SharePoint rendering in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline, with reasonable tolerance for minor visual differences.
 
@@ -81,11 +81,11 @@ Capture WHAT and WHY here; defer HOW to plan.md.
 - **FR-004**: The system MUST validate JSON against the official SharePoint formatting schema for the selected formatter type, with clear error locations and helpful hints.
 - **FR-005**: The system MUST provide a guided form for common formatting patterns that updates the JSON.
 - **FR-006**: The system MUST render a preview using editable sample list item data.
-- **FR-007**: The system MUST support export via copy-to-clipboard, JSON download, and SharePoint-ready snippets that wrap the formatter JSON in the SharePoint v2 schema container defined in the official schema file for the selected formatter type (e.g., `column-formatting.json`, `row-formatting.json`, `view-formatting.json`, `tile-formatting.json`, `board-formatting.json`, `calendar-formatting.json`).
+- **FR-007**: The system MUST support export via copy-to-clipboard, JSON download, and SharePoint-ready snippets that wrap the formatter JSON in the appropriate SharePoint v2 schema container for the selected formatter type.
 - **FR-008**: The system MUST function without an account and without a network connection after initial load.
 - **FR-009**: The system MUST provide clear, example-driven error messages for SharePoint expressions.
 - **FR-010**: The system MUST auto-save work to local browser storage and also provide a user-initiated save action.
-- **FR-011**: The system MUST provide pixel-perfect preview output matching SharePoint rendering for the selected formatter type in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline.
+- **FR-011**: The system MUST provide a high-fidelity preview output that closely matches SharePoint rendering for the selected formatter type in the latest stable Edge and Chrome, using SharePoint v2 schema-compatible HTML/CSS behavior as the baseline, with reasonable tolerance for minor visual differences.
 
 **SharePoint v2 container mapping (reference)**
 

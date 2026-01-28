@@ -17,7 +17,7 @@ description: "Task list for SharePoint Formatter app"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Next.js 16 app with TypeScript strict mode enabled (`compilerOptions.strict: true` in `tsconfig.json`), creating `package.json`, `tsconfig.json`, `app/layout.tsx`, `app/page.tsx`
+- [ ] T001 Initialize a Next.js 16 app using TypeScript with strict type checking and a basic app shell consistent with the design documents.
 - [ ] T002 [P] Add Monaco Editor, AJV, and IndexedDB helpers to `package.json`
 - [ ] T003 [P] Configure Jest + React Testing Library in `jest.config.ts`, `jest.setup.ts`, `package.json`, root-level `tests/` directory
 - [ ] T004 [P] Create base app shell layout and styles in `app/layout.tsx`, `app/page.tsx`, `app/styles/globals.css`
@@ -119,9 +119,11 @@ description: "Task list for SharePoint Formatter app"
 
 - [ ] T040 [P] Add keyboard focus styles and ARIA labels in `app/styles/accessibility.css` and `app/editor/components/*.tsx`
 - [ ] T041 [P] Add offline status indicator in `app/editor/components/OfflineStatus.tsx`
-- [ ] T042 [P] Add offline caching strategy and verification in `app/lib/persistence/offlineCache.ts`, `app/layout.tsx` (acceptance: core editor, validation, and preview work after disabling network post-initial-load; verification: add an automated offline smoke test in `tests/integration/offline.spec.ts` and perform a manual offline smoke test from `quickstart.md`)
-- [ ] T043 Performance tune preview rendering in `app/preview/renderer/render.ts`
-- [ ] T044 Run quickstart workflow validation and update notes in `specs/001-sharepoint-formatter-app/quickstart.md`
+- [ ] T042 [P] Add offline caching strategy in `app/lib/persistence/offlineCache.ts`, `app/layout.tsx` (acceptance: core editor, validation, and preview work after disabling network post-initial-load)
+- [ ] T043 [P] Add automated offline smoke test in `tests/integration/offline.spec.ts` to verify offline behavior after initial load
+- [ ] T044 [P] Document and perform manual offline smoke test workflow in `specs/001-sharepoint-formatter-app/quickstart.md`
+- [ ] T045 Performance tune preview rendering in `app/preview/renderer/render.ts`
+- [ ] T046 Run quickstart workflow validation and update notes in `specs/001-sharepoint-formatter-app/quickstart.md`
 
 ---
 

@@ -9,7 +9,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-27
 ## Project Structure
 
 ```text
-src/
+app/
 tests/
 ```
 
