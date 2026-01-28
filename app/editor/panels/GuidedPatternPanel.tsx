@@ -33,6 +33,7 @@ export const GuidedPatternPanel = ({
       <select
         value={selectedId ?? ""}
         onChange={(event) => setSelectedId(event.target.value)}
+        aria-label="Select guided pattern"
       >
         {patterns.map((pattern) => (
           <option key={pattern.id} value={pattern.id}>
@@ -49,12 +50,14 @@ export const GuidedPatternPanel = ({
                 type={input.type === "color" ? "color" : "text"}
                 value={values[input.id] ?? ""}
                 onChange={(event) => handleInputChange(input.id, event.target.value)}
+                aria-label={input.label}
               />
             </label>
           ))}
           <button
             type="button"
             onClick={() => onApply(selectedPattern, values)}
+            aria-label="Apply guided pattern"
           >
             Apply Pattern
           </button>

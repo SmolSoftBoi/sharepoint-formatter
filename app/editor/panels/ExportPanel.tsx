@@ -42,6 +42,7 @@ export const ExportPanel = ({ formatterTypeId, json }: ExportPanelProps) => {
         <button
           type="button"
           onClick={() => handleCopy(getJsonText(json), "JSON")}
+          aria-label="Copy JSON to clipboard"
         >
           Copy JSON
         </button>
@@ -56,6 +57,7 @@ export const ExportPanel = ({ formatterTypeId, json }: ExportPanelProps) => {
               "SharePoint snippet",
             )
           }
+          aria-label="Copy SharePoint snippet to clipboard"
         >
           Copy SharePoint Snippet
         </button>

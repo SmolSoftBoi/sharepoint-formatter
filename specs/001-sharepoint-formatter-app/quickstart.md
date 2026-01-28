@@ -17,3 +17,4 @@
 
 ## Tests
 - Run unit tests for validator, schema loader, expression helpers, template generator.
+- Run integration test for offline cache (`tests/integration/offline.spec.ts`).

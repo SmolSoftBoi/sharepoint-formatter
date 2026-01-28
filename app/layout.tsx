@@ -1,4 +1,5 @@
 import "./styles/globals.css";
+import "./styles/accessibility.css";
 
 export const metadata = {
   title: "SharePoint Formatter",

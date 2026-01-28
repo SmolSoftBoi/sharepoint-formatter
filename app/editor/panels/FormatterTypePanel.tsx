@@ -19,6 +19,7 @@ export const FormatterTypePanel = ({
               type="button"
               onClick={() => onSelect(type.id)}
               aria-pressed={type.id === selectedId}
+              aria-label={`Select formatter type ${type.name}`}
             >
               {type.name}
             </button>

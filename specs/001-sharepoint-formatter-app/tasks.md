@@ -117,13 +117,13 @@ description: "Task list for SharePoint Formatter app"
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T040 [P] Add keyboard focus styles and ARIA labels in `app/styles/accessibility.css` and `app/editor/components/*.tsx`.
-- [ ] T041 [P] Add offline status indicator in `app/editor/components/OfflineStatus.tsx`.
-- [ ] T042 [P] Add offline caching strategy in `app/lib/persistence/offlineCache.ts`, `app/layout.tsx` (acceptance: core editor, validation, and preview work after disabling network post-initial-load).
-- [ ] T043 [P] Add automated offline smoke test in `tests/integration/offline.spec.ts` to verify offline behavior after initial load.
-- [ ] T044 [P] Document and perform manual offline smoke test workflow in `specs/001-sharepoint-formatter-app/quickstart.md`.
-- [ ] T045 Performance tune preview rendering in `app/preview/renderer/render.ts`.
-- [ ] T046 Run quickstart workflow validation and update notes in `specs/001-sharepoint-formatter-app/quickstart.md`.
+- [x] T040 [P] Add keyboard focus styles and ARIA labels in `app/styles/accessibility.css` and `app/editor/components/*.tsx`.
+- [x] T041 [P] Add offline status indicator in `app/editor/components/OfflineStatus.tsx`.
+- [x] T042 [P] Add offline caching strategy in `app/lib/persistence/offlineCache.ts`, `app/layout.tsx` (acceptance: core editor, validation, and preview work after disabling network post-initial-load).
+- [x] T043 [P] Add automated offline smoke test in `tests/integration/offline.spec.ts` to verify offline behavior after initial load.
+- [x] T044 [P] Document and perform manual offline smoke test workflow in `specs/001-sharepoint-formatter-app/quickstart.md`.
+- [x] T045 Performance tune preview rendering in `app/preview/renderer/render.ts`.
+- [x] T046 Run quickstart workflow validation and update notes in `specs/001-sharepoint-formatter-app/quickstart.md`.
 
 ---
 

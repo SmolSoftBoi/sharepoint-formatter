@@ -21,6 +21,7 @@ export const TemplatePanel = ({
               type="button"
               onClick={() => onSelect(template.id)}
               aria-pressed={template.id === selectedId}
+              aria-label={`Apply template ${template.name}`}
             >
               {template.name}
             </button>

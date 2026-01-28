@@ -36,7 +36,7 @@ export const SaveDraftButton = () => {
 
   return (
     <div>
-      <button type="button" onClick={handleSave}>
+      <button type="button" onClick={handleSave} aria-label="Save draft locally">
         Save Draft
       </button>
       {status && <span>{status}</span>}

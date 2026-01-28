@@ -23,6 +23,7 @@ export const SampleDataPanel = ({
         value={JSON.stringify(sampleData, null, 2)}
         onChange={(event) => handleChange(event.target.value)}
         rows={8}
+        aria-label="Sample data JSON"
       />
     </section>
   );
