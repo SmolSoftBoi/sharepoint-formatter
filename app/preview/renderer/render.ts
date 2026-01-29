@@ -44,7 +44,7 @@ const escapeHtml = (value: string) =>
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/"/g, "&quot;")
-    .replace(/\"/g, "&quot;")
+
     .replace(/'/g, "&#39;");
 
 const escapeAttr = (value: string) => escapeHtml(value);

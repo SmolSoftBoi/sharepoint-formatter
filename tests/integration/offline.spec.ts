@@ -1,8 +1,7 @@
 import { getOfflineStatus, initOfflineCache, teardownOfflineCache } from "../../app/lib/persistence/offlineCache";
 import { renderPreview } from "../../app/preview/renderer/render";
 import { validateFormatterJson } from "../../app/lib/validation/validator";
-
-type WindowWithCaches = Window & { caches?: CacheStorage };
+import { WindowWithCaches } from "../testUtils/windowCache";
 
 describe("offline cache", () => {
   let originalOnline: boolean;

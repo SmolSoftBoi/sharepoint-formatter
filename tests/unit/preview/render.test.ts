@@ -41,6 +41,60 @@ describe("renderPreview", () => {
     expect(result.warnings).toContain("Image element missing src attribute.");
   });
 
+  it("renders styles and attributes with expression resolution", () => {
+    const result = renderPreview(
+      {
+        elmType: "div",
+        style: { backgroundColor: "red", width: "@currentField" },
+        attributes: { title: "[$Title]" },
+        txtContent: "[$Title]",
+      },
+      { Title: "Hello" },
+    );
+
+    expect(result.html).toContain("background-color:red");
+    expect(result.html).toContain("width:Hello");
+    expect(result.html).toContain("title=\"Hello\"");
+    expect(result.html).toContain("Hello");
+  });
+
+  it("escapes attribute values", () => {
+    const result = renderPreview(
+      {
+        elmType: "div",
+        attributes: { title: "Hello & \"World\"" },
+        txtContent: "Safe",
+      },
+      {},
+    );
+
+    expect(result.html).toContain("title=\"Hello &amp; &quot;World&quot;\"");
+  });
+
+  it("renders number and boolean expressions", () => {
+    const result = renderPreview(
+      {
+        elmType: "div",
+        txtContent: 42,
+        children: [{ elmType: "span", txtContent: true }],
+      },
+      {},
+    );
+
+    expect(result.html).toContain("42");
+    expect(result.html).toContain("true");
+  });
+
+  it("renders arrays of nodes", () => {
+    const result = renderPreview([
+      { elmType: "span", txtContent: "A" },
+      { elmType: "span", txtContent: "B" },
+    ], {});
+
+    expect(result.html).toContain("A");
+    expect(result.html).toContain("B");
+  });
+
   it("returns a fallback message when no content is rendered", () => {
     const result = renderPreview(null, {});
 
