@@ -3,6 +3,9 @@ export interface PreviewRenderResult {
   warnings: string[];
 }
 
+// Limit preview cache size to a small number to bound memory usage while still
+// reusing the most recently rendered previews. Increase if typical usage
+// patterns require more concurrent distinct previews.
 const MAX_CACHE_ENTRIES = 10;
 const previewCache = new Map<string, PreviewRenderResult>();
 

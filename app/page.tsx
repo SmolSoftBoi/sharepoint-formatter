@@ -35,7 +35,7 @@ export default function HomePage() {
     }
   }, [editorState.sampleData]);
 
-  const handleTemplateSelect = (templateId: string) => {
+  const applyTemplate = (templateId: string) => {
     const template = TEMPLATE_CATALOG.find((item) => item.id === templateId);
     if (!template) {
       return;
@@ -54,7 +54,7 @@ export default function HomePage() {
         <TemplatePanel
           templates={templates}
           selectedId={editorState.templateId}
-          onSelect={handleTemplateSelect}
+          onSelect={applyTemplate}
         />
         <GuidedPatternPanel
           formatterTypeId={editorState.formatterTypeId}
