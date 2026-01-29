@@ -1,4 +1,5 @@
-import Ajv, { ErrorObject } from "ajv";
+import Ajv from "ajv-draft-04";
+import { ErrorObject } from "ajv";
 import { FormatterTypeId } from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
 
@@ -13,7 +14,7 @@ export interface ValidationResult {
   errors: ValidationError[];
 }
 
-const ajv = new Ajv({ allErrors: true, strict: false });
+const ajv = new Ajv({ allErrors: true, strict: false, unicodeRegExp: false });
 
 const formatErrors = (errors: ErrorObject[] | null | undefined): ValidationError[] => {
   if (!errors) {

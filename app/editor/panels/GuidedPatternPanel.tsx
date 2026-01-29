@@ -48,7 +48,11 @@ export const GuidedPatternPanel = ({
               {input.label}
               <input
                 type={input.type === "color" ? "color" : "text"}
-                value={values[input.id] ?? ""}
+                value={
+                  input.type === "color"
+                    ? values[input.id] || "#000000"
+                    : values[input.id] ?? ""
+                }
                 onChange={(event) => handleInputChange(input.id, event.target.value)}
                 aria-label={input.label}
               />

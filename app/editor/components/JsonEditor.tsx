@@ -21,9 +21,24 @@ export const JsonEditor = ({
   const [fallbackText, setFallbackText] = useState(
     JSON.stringify(value, null, 2),
   );
+  const onValidJsonRef = useRef(onValidJson);
+  const onParseErrorRef = useRef(onParseError);
 
   useEffect(() => {
-    setFallbackText(JSON.stringify(value, null, 2));
+    onValidJsonRef.current = onValidJson;
+    onParseErrorRef.current = onParseError;
+  }, [onValidJson, onParseError]);
+
+  useEffect(() => {
+    const nextText = JSON.stringify(value, null, 2);
+    if (editorRef.current) {
+      const editor = editorRef.current;
+      if (!editor.hasTextFocus() && editor.getValue() !== nextText) {
+        editor.setValue(nextText);
+      }
+    } else {
+      setFallbackText(nextText);
+    }
   }, [value]);
 
   useEffect(() => {
@@ -33,9 +48,33 @@ export const JsonEditor = ({
       if (!containerRef.current) {
         return;
       }
-      const monaco = await import("monaco-editor");
+      const monaco = await import("monaco-editor/esm/vs/editor/editor.api");
       if (disposed || !containerRef.current) {
         return;
+      }
+      if (!(globalThis as typeof globalThis & { MonacoEnvironment?: unknown }).MonacoEnvironment) {
+        (globalThis as typeof globalThis & {
+          MonacoEnvironment?: {
+            getWorker: (_: string, label: string) => Worker;
+          };
+        }).MonacoEnvironment = {
+          getWorker: (_moduleId: string, label: string) => {
+            if (label === "json") {
+              return new Worker(
+                new URL(
+                  "monaco-editor/esm/vs/language/json/json.worker",
+                  import.meta.url,
+                ),
+              );
+            }
+            return new Worker(
+              new URL(
+                "monaco-editor/esm/vs/editor/editor.worker",
+                import.meta.url,
+              ),
+            );
+          },
+        };
       }
       const editorInstance = monaco.editor.create(containerRef.current, {
         value: JSON.stringify(value, null, 2),
@@ -47,10 +86,10 @@ export const JsonEditor = ({
         const raw = editorInstance.getValue();
         const result = sanitizeJsonString(raw);
         if (result.ok) {
-          onParseError(undefined);
-          onValidJson(result.value);
+          onParseErrorRef.current(undefined);
+          onValidJsonRef.current(result.value);
         } else {
-          onParseError(result.error);
+          onParseErrorRef.current(result.error);
         }
       });
       editorRef.current = editorInstance;
@@ -63,7 +102,7 @@ export const JsonEditor = ({
       disposed = true;
       editorRef.current?.dispose();
     };
-  }, [onParseError, onValidJson, value]);
+  }, []);
 
   const handleFallbackChange = (raw: string) => {
     setFallbackText(raw);

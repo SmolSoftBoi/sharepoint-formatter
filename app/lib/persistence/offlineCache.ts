@@ -29,6 +29,9 @@ export const initOfflineCache = async () => {
     return;
   }
 
+  isOnline = navigator.onLine;
+  notify();
+
   window.addEventListener("online", handleOnline);
   window.addEventListener("offline", handleOffline);
 

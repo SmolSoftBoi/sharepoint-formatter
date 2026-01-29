@@ -26,11 +26,18 @@ const state: EditorState = {
 };
 
 const listeners = new Set<() => void>();
+let cachedSnapshot: EditorState = { ...state };
 
-export const getEditorState = (): EditorState => ({ ...state });
+export const getEditorState = (): EditorState => {
+  return cachedSnapshot;
+};
 
 const notify = () => {
   listeners.forEach((listener) => listener());
+};
+
+const bumpVersion = () => {
+  cachedSnapshot = { ...state };
 };
 
 const recomputeValidation = () => {
@@ -44,18 +51,25 @@ export const subscribe = (listener: () => void) => {
   return () => listeners.delete(listener);
 };
 
+const getServerSnapshot = (() => {
+  const snapshot = getEditorState();
+  return () => snapshot;
+})();
+
 export const useEditorState = (): EditorState => {
-  return useSyncExternalStore(subscribe, getEditorState, getEditorState);
+  return useSyncExternalStore(subscribe, getEditorState, getServerSnapshot);
 };
 
 export const setFormatterType = (formatterTypeId: FormatterTypeId) => {
   state.formatterTypeId = formatterTypeId;
   recomputeValidation();
+  bumpVersion();
   notify();
 };
 
 export const setTemplateId = (templateId?: string) => {
   state.templateId = templateId;
+  bumpVersion();
   notify();
 };
 
@@ -63,15 +77,18 @@ export const setJson = (json: unknown) => {
   state.json = json;
   state.parseError = undefined;
   recomputeValidation();
+  bumpVersion();
   notify();
 };
 
 export const setJsonParseError = (error?: string) => {
   state.parseError = error;
+  bumpVersion();
   notify();
 };
 
 export const setSampleData = (sampleData: Record<string, unknown>) => {
   state.sampleData = sampleData;
+  bumpVersion();
   notify();
 };

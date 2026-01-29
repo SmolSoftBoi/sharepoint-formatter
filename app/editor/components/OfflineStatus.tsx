@@ -9,7 +9,7 @@ import {
 } from "../../lib/persistence/offlineCache";
 
 export const OfflineStatus = () => {
-  const [isOnline, setIsOnline] = useState(getOfflineStatus().isOnline);
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
 
   useEffect(() => {
     initOfflineCache();
@@ -22,7 +22,7 @@ export const OfflineStatus = () => {
 
   return (
     <div className="offline-status" aria-live="polite">
-      {isOnline ? "Online" : "Offline"}
+      {isOnline === null ? "Checking status" : isOnline ? "Online" : "Offline"}
     </div>
   );
 };
