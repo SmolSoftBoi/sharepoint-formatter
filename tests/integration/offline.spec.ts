@@ -20,6 +20,13 @@ describe("offline cache", () => {
   });
 
   it("supports validation and preview while offline", async () => {
+    const originalCaches = (window as Window & { caches?: CacheStorage }).caches;
+    (window as Window & { caches?: CacheStorage }).caches = {
+      open: jest.fn().mockResolvedValue({
+        addAll: jest.fn().mockRejectedValue(new Error("Network down")),
+      }),
+    } as unknown as CacheStorage;
+
     await initOfflineCache();
 
     const validation = validateFormatterJson("column", { elmType: "div" });
@@ -27,6 +34,8 @@ describe("offline cache", () => {
 
     const preview = renderPreview({ elmType: "span", txtContent: "[$Title]" }, { Title: "Offline" });
     expect(preview.html).toContain("Offline");
+
+    (window as Window & { caches?: CacheStorage }).caches = originalCaches;
   });
 
   afterEach(() => {
