@@ -11,6 +11,7 @@ describe("offline cache", () => {
       value: false,
       configurable: true,
     });
+    expect(window.navigator.onLine).toBe(false);
   });
 
   it("tracks offline status after init", async () => {
