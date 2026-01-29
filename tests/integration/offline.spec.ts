@@ -2,6 +2,8 @@ import { getOfflineStatus, initOfflineCache, teardownOfflineCache } from "../../
 import { renderPreview } from "../../app/preview/renderer/render";
 import { validateFormatterJson } from "../../app/lib/validation/validator";
 
+type WindowWithCaches = Window & { caches?: CacheStorage };
+
 describe("offline cache", () => {
   let originalOnline: boolean;
 
@@ -20,7 +22,8 @@ describe("offline cache", () => {
   });
 
   it("supports validation and preview while offline", async () => {
-    const originalCaches = (window as Window & { caches?: CacheStorage }).caches;
+    const windowWithCaches = window as WindowWithCaches;
+    const originalCaches = windowWithCaches.caches;
     const cacheMock = {
       add: jest.fn().mockRejectedValue(new Error("Network down")),
       addAll: jest.fn().mockRejectedValue(new Error("Network down")),
@@ -30,7 +33,7 @@ describe("offline cache", () => {
       put: jest.fn().mockResolvedValue(undefined),
     } as unknown as Cache;
 
-    (window as Window & { caches?: CacheStorage }).caches = {
+    windowWithCaches.caches = {
       delete: jest.fn().mockResolvedValue(false),
       has: jest.fn().mockResolvedValue(false),
       keys: jest.fn().mockResolvedValue([]),
@@ -46,7 +49,7 @@ describe("offline cache", () => {
     const preview = renderPreview({ elmType: "span", txtContent: "[$Title]" }, { Title: "Offline" });
     expect(preview.html).toContain("Offline");
 
-    (window as Window & { caches?: CacheStorage }).caches = originalCaches;
+    windowWithCaches.caches = originalCaches;
   });
 
   afterEach(() => {
