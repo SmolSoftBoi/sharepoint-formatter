@@ -4,8 +4,9 @@ export interface PreviewRenderResult {
 }
 
 // Limit preview cache size to a small number to bound memory usage while still
-// reusing the most recently rendered previews. Increase if typical usage
-// patterns require more concurrent distinct previews.
+// reusing the most recently rendered previews. Ten entries roughly matches the
+// expected upper bound of distinct previews a user will switch between in one
+// session; beyond this, cache hit rates improve little while memory grows.
 const MAX_CACHE_ENTRIES = 10;
 const previewCache = new Map<string, PreviewRenderResult>();
 
@@ -42,7 +43,7 @@ const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
