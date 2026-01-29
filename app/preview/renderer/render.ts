@@ -3,16 +3,17 @@ export interface PreviewRenderResult {
   warnings: string[];
 }
 
-let lastKey: string | null = null;
-let lastResult: PreviewRenderResult | null = null;
+const MAX_CACHE_ENTRIES = 10;
+const previewCache = new Map<string, PreviewRenderResult>();
 
 export const renderPreview = (
   json: unknown,
   sampleData: Record<string, unknown>,
 ): PreviewRenderResult => {
   const key = JSON.stringify({ json, sampleData });
-  if (lastKey === key && lastResult) {
-    return lastResult;
+  const cached = previewCache.get(key);
+  if (cached) {
+    return cached;
   }
 
   const warnings: string[] = [];
@@ -22,8 +23,13 @@ export const renderPreview = (
     warnings,
   };
 
-  lastKey = key;
-  lastResult = result;
+  previewCache.set(key, result);
+  if (previewCache.size > MAX_CACHE_ENTRIES) {
+    const oldestKey = previewCache.keys().next().value;
+    if (oldestKey) {
+      previewCache.delete(oldestKey);
+    }
+  }
   return result;
 };
 
