@@ -16,9 +16,9 @@ describe("expression helpers", () => {
     expect(fields).toEqual(["Status"]);
   });
 
-  it("ignores invalid field names with spaces", () => {
+  it("handles field names with spaces", () => {
     const fields = extractFieldReferences("=concat([$Title], ' - ', [$Owner Name])");
-    expect(fields).toEqual(["$Title"]);
+    expect(fields).toEqual(["$Title", "$Owner Name"]);
   });
 
   it("captures field references with dollar prefix", () => {
