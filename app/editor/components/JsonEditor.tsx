@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import type { editor as MonacoEditor } from "monaco-editor";
 import { sanitizeJsonString } from "../../lib/validation/sanitizeJson";
 
+type MonacoGlobal = typeof globalThis & {
+  MonacoEnvironment?: {
+    getWorker: (_: string, label: string) => Worker;
+  };
+};
+
 interface JsonEditorProps {
   value: unknown;
   onValidJson: (value: unknown) => void;
@@ -52,12 +58,8 @@ export const JsonEditor = ({
       if (disposed || !containerRef.current) {
         return;
       }
-      if (!(globalThis as typeof globalThis & { MonacoEnvironment?: unknown }).MonacoEnvironment) {
-        (globalThis as typeof globalThis & {
-          MonacoEnvironment?: {
-            getWorker: (_: string, label: string) => Worker;
-          };
-        }).MonacoEnvironment = {
+      if (!(globalThis as MonacoGlobal).MonacoEnvironment) {
+        (globalThis as MonacoGlobal).MonacoEnvironment = {
           getWorker: (_moduleId: string, label: string) => {
             if (label === "json") {
               return new Worker(
