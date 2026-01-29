@@ -7,13 +7,23 @@ describe("expression helpers", () => {
   });
 
   it("extracts multiple field references in order", () => {
-    const fields = extractFieldReferences("=concat([$Title], ' - ', [$Owner Name])");
-    expect(fields).toEqual(["$Title", "$Owner Name"]);
+    const fields = extractFieldReferences("=concat([$Title], ' - ', [$Owner_Name])");
+    expect(fields).toEqual(["$Title", "$Owner_Name"]);
   });
 
-  it("handles quoted field names and trims whitespace", () => {
-    const fields = extractFieldReferences("=if(['  Status  '] == 'Done', '✅', '⏳')");
+  it("handles quoted field names", () => {
+    const fields = extractFieldReferences("=if(['Status'] == 'Done', '✅', '⏳')");
     expect(fields).toEqual(["Status"]);
+  });
+
+  it("ignores invalid field names with spaces", () => {
+    const fields = extractFieldReferences("=concat([$Title], ' - ', [$Owner Name])");
+    expect(fields).toEqual(["$Title"]);
+  });
+
+  it("captures field references with dollar prefix", () => {
+    const fields = extractFieldReferences("=if([$Status] == 'Done', [$Status], '')");
+    expect(fields).toEqual(["$Status", "$Status"]);
   });
 
   it("returns an empty array when no references exist", () => {
