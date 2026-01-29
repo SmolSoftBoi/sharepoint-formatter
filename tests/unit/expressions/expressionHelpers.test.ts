@@ -21,7 +21,7 @@ describe("expression helpers", () => {
     expect(fields).toEqual(["$Title", "$Owner Name"]);
   });
 
-  it("captures field references with dollar prefix", () => {
+  it("preserves duplicate references with dollar prefix", () => {
     const fields = extractFieldReferences("=if([$Status] == 'Done', [$Status], '')");
     expect(fields).toEqual(["$Status", "$Status"]);
   });
