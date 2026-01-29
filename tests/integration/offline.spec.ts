@@ -21,10 +21,21 @@ describe("offline cache", () => {
 
   it("supports validation and preview while offline", async () => {
     const originalCaches = (window as Window & { caches?: CacheStorage }).caches;
+    const cacheMock = {
+      add: jest.fn().mockRejectedValue(new Error("Network down")),
+      addAll: jest.fn().mockRejectedValue(new Error("Network down")),
+      delete: jest.fn().mockResolvedValue(false),
+      keys: jest.fn().mockResolvedValue([]),
+      match: jest.fn().mockResolvedValue(undefined),
+      put: jest.fn().mockResolvedValue(undefined),
+    } as unknown as Cache;
+
     (window as Window & { caches?: CacheStorage }).caches = {
-      open: jest.fn().mockResolvedValue({
-        addAll: jest.fn().mockRejectedValue(new Error("Network down")),
-      }),
+      delete: jest.fn().mockResolvedValue(false),
+      has: jest.fn().mockResolvedValue(false),
+      keys: jest.fn().mockResolvedValue([]),
+      match: jest.fn().mockResolvedValue(undefined),
+      open: jest.fn().mockResolvedValue(cacheMock),
     } as unknown as CacheStorage;
 
     await initOfflineCache();
