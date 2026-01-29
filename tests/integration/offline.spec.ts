@@ -3,9 +3,10 @@ import { renderPreview } from "../../app/preview/renderer/render";
 import { validateFormatterJson } from "../../app/lib/validation/validator";
 
 describe("offline cache", () => {
-  const originalOnline = window.navigator.onLine;
+  let originalOnline = window.navigator.onLine;
 
   beforeEach(() => {
+    originalOnline = window.navigator.onLine;
     Object.defineProperty(window.navigator, "onLine", {
       value: false,
       configurable: true,
