@@ -104,7 +104,7 @@ export const JsonEditor = ({
       disposed = true;
       editorRef.current?.dispose();
     };
-  }, []);
+  }, [value]);
 
   const handleFallbackChange = (raw: string) => {
     setFallbackText(raw);

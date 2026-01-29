@@ -13,6 +13,8 @@ export const renderPreview = (
   const key = JSON.stringify({ json, sampleData });
   const cached = previewCache.get(key);
   if (cached) {
+    previewCache.delete(key);
+    previewCache.set(key, cached);
     return cached;
   }
 

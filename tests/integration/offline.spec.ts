@@ -3,7 +3,7 @@ import { renderPreview } from "../../app/preview/renderer/render";
 import { validateFormatterJson } from "../../app/lib/validation/validator";
 
 describe("offline cache", () => {
-  let originalOnline = window.navigator.onLine;
+  let originalOnline: boolean;
 
   beforeEach(() => {
     originalOnline = window.navigator.onLine;
