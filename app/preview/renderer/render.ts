@@ -1,16 +1,29 @@
+import escapeHtmlLib from "escape-html";
+
 export interface PreviewRenderResult {
   html: string;
   warnings: string[];
 }
 
-// Limit preview cache size to a small number to bound memory usage while still
-// reusing the most recently rendered previews. Ten entries roughly matches the
-// expected upper bound of distinct previews a user will switch between in one
-// session; beyond this, cache hit rates improve little while memory grows.
-const MAX_CACHE_ENTRIES = 10;
-const previewCache = new Map<string, PreviewRenderResult>();
+// Maximum number of preview entries to keep in the in-memory cache.
+// reusing the most recently rendered previews. By default, ten entries roughly
+// matches the expected upper bound of distinct previews a user will switch
+// between in one session; beyond this, cache hit rates improve little while
+// memory grows. This default can be overridden via the PREVIEW_MAX_CACHE_ENTRIES
+// environment variable (must be a positive integer).
+const DEFAULT_MAX_CACHE_ENTRIES = 10;
 
-export const renderPreview = (
+const envMaxCacheEntries =
+  typeof process !== "undefined" &&
+  process.env &&
+  process.env.PREVIEW_MAX_CACHE_ENTRIES
+    ? Number.parseInt(process.env.PREVIEW_MAX_CACHE_ENTRIES, 10)
+    : NaN;
+
+const MAX_CACHE_ENTRIES =
+  Number.isNaN(envMaxCacheEntries) || envMaxCacheEntries <= 0
+    ? DEFAULT_MAX_CACHE_ENTRIES
+    : envMaxCacheEntries;
   json: unknown,
   sampleData: Record<string, unknown>,
 ): PreviewRenderResult => {
@@ -39,13 +52,7 @@ export const renderPreview = (
   return result;
 };
 
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/"/g, "&quot;")
-
-    .replace(/'/g, "&#39;");
+const escapeHtml = (value: string) => escapeHtmlLib(value);
 
 const escapeAttr = (value: string) => escapeHtml(value);
 
