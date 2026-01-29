@@ -2,7 +2,7 @@ import { getOfflineStatus, initOfflineCache, teardownOfflineCache } from "../../
 import { renderPreview } from "../../app/preview/renderer/render";
 import { validateFormatterJson } from "../../app/lib/validation/validator";
 
-type WindowWithOptionalCaches = Window & { caches?: CacheStorage };
+type WindowWithCaches = Window & { caches?: CacheStorage };
 
 describe("offline cache", () => {
   let originalOnline: boolean;
@@ -22,7 +22,7 @@ describe("offline cache", () => {
   });
 
   it("supports validation and preview while offline", async () => {
-    const windowWithCaches = window as WindowWithOptionalCaches;
+    const windowWithCaches = window as WindowWithCaches;
     const originalCaches = windowWithCaches.caches;
     const cacheMock = {
       add: jest.fn().mockRejectedValue(new Error("Network down")),
