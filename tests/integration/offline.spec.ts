@@ -3,6 +3,8 @@ import { renderPreview } from "../../app/preview/renderer/render";
 import { validateFormatterJson } from "../../app/lib/validation/validator";
 
 describe("offline cache", () => {
+  const originalOnline = window.navigator.onLine;
+
   beforeEach(() => {
     Object.defineProperty(window.navigator, "onLine", {
       value: false,
@@ -27,5 +29,9 @@ describe("offline cache", () => {
 
   afterEach(() => {
     teardownOfflineCache();
+    Object.defineProperty(window.navigator, "onLine", {
+      value: originalOnline,
+      configurable: true,
+    });
   });
 });

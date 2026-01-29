@@ -142,7 +142,9 @@ const renderNode = (
     .filter(Boolean)
     .join(" ");
 
-  const content = [txtContent ? escapeHtml(txtContent) : "", ...children.map((child) => renderNode(child, sampleData, warnings))].join("");
+  const textPart = txtContent ? escapeHtml(txtContent) : "";
+  const childParts = children.map((child) => renderNode(child, sampleData, warnings));
+  const content = [textPart, ...childParts].join("");
 
   if (elmType === "img") {
     if (!attributes.src) {

@@ -5,4 +5,19 @@ describe("expression helpers", () => {
     const fields = extractFieldReferences("=if([$Status] == 'Done', '✅', '⏳')");
     expect(fields).toEqual(["$Status"]);
   });
+
+  it("extracts multiple field references in order", () => {
+    const fields = extractFieldReferences("=concat([$Title], ' - ', [$Owner Name])");
+    expect(fields).toEqual(["$Title", "$Owner Name"]);
+  });
+
+  it("handles quoted field names and trims whitespace", () => {
+    const fields = extractFieldReferences("=if(['  Status  '] == 'Done', '✅', '⏳')");
+    expect(fields).toEqual(["Status"]);
+  });
+
+  it("returns an empty array when no references exist", () => {
+    const fields = extractFieldReferences("=if(1 == 1, 'Yes', 'No')");
+    expect(fields).toEqual([]);
+  });
 });
