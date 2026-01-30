@@ -9,9 +9,14 @@ export interface PreviewRenderResult {
 // - The cache key is the JSON + sample data payload.
 // - Cache hits are promoted by deleting and re-inserting the entry.
 // - When the size exceeds the max, the least recently used (oldest) entry is evicted.
-// This bounds memory usage while keeping recent previews fast. The default limit can
-// be overridden via PREVIEW_MAX_CACHE_ENTRIES (must be a positive integer).
-const DEFAULT_MAX_CACHE_ENTRIES = 10; // Covers typical 1–2 formatter types with a handful of recent previews.
+// This bounds memory usage while keeping recent previews fast.
+// The default limit (10 entries) is chosen as a conservative value based on:
+// - Typical usage of 1–2 formatter types per workspace.
+// - A small number of recent previews per formatter (roughly 3–5 that users switch between).
+// - Each entry being relatively small (JSON payload + rendered HTML), so 10 entries keeps
+//   cache memory usage well under a few hundred kilobytes in typical scenarios.
+// The limit can be overridden via PREVIEW_MAX_CACHE_ENTRIES (must be a positive integer).
+const DEFAULT_MAX_CACHE_ENTRIES = 10;
 
 const envMaxCacheEntries =
   typeof process !== "undefined" &&
@@ -101,7 +106,7 @@ const resolveExpression = (
 
   const fieldMatch = raw.match(/^\[\$?([A-Za-z0-9_ ]+)\]$/);
   if (fieldMatch) {
-    const field = fieldMatch[1];
+    const field = fieldMatch[1].replace(/^\$/, "");
     const value = sampleData[field];
     return value ? String(value) : "";
   }

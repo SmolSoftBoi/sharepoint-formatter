@@ -9,6 +9,15 @@ describe("renderPreview", () => {
     expect(result.warnings).toEqual([]);
   });
 
+  it("renders dollar-prefixed field expressions", () => {
+    const result = renderPreview(
+      { elmType: "span", txtContent: "[$Status]" },
+      { Status: "Done" },
+    );
+
+    expect(result.html).toContain("Done");
+  });
+
   it("resolves @currentField paths", () => {
     const result = renderPreview(
       { elmType: "span", txtContent: "@currentField.title" },
