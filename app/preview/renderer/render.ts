@@ -5,12 +5,12 @@ export interface PreviewRenderResult {
   warnings: string[];
 }
 
-// Maximum number of preview entries to keep in the in-memory cache.
-// reusing the most recently rendered previews. By default, ten entries roughly
-// matches the expected upper bound of distinct previews a user will switch
-// between in one session; beyond this, cache hit rates improve little while
-// memory grows. This default can be overridden via the PREVIEW_MAX_CACHE_ENTRIES
-// environment variable (must be a positive integer).
+// Preview render cache uses an LRU-like strategy:
+// - The cache key is the JSON + sample data payload.
+// - Cache hits are promoted by deleting and re-inserting the entry.
+// - When the size exceeds the max, the least recently used (oldest) entry is evicted.
+// This bounds memory usage while keeping recent previews fast. The default limit can
+// be overridden via PREVIEW_MAX_CACHE_ENTRIES (must be a positive integer).
 const DEFAULT_MAX_CACHE_ENTRIES = 10;
 
 const envMaxCacheEntries =
