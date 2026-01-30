@@ -24,11 +24,12 @@ const MAX_CACHE_ENTRIES =
   Number.isNaN(envMaxCacheEntries) || envMaxCacheEntries <= 0
     ? DEFAULT_MAX_CACHE_ENTRIES
     : envMaxCacheEntries;
-export const renderPreview = (
+const previewCache = new Map<string, PreviewRenderResult>();
 
-  const key = JSON.stringify({ json, sampleData });
-  const cached = previewCache.get(key);
-  if (cached) {
+export const renderPreview = (
+  json: unknown,
+  sampleData: Record<string, unknown>,
+): PreviewRenderResult => {
   const key = JSON.stringify({ json, sampleData });
   const cached = previewCache.get(key);
   if (cached) {
