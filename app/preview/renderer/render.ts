@@ -23,14 +23,12 @@ const envMaxCacheEntries =
 const MAX_CACHE_ENTRIES =
   Number.isNaN(envMaxCacheEntries) || envMaxCacheEntries <= 0
     ? DEFAULT_MAX_CACHE_ENTRIES
-    : envMaxCache_ENTRIES;
+    : envMaxCacheEntries;
 export const renderPreview = (
 
-export const renderPreview = (
-export const renderPreview = (
-  json: unknown,
-  sampleData: Record<string, unknown>,
-): PreviewRenderResult => {
+  const key = JSON.stringify({ json, sampleData });
+  const cached = previewCache.get(key);
+  if (cached) {
   const key = JSON.stringify({ json, sampleData });
   const cached = previewCache.get(key);
   if (cached) {
