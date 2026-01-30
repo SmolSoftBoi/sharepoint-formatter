@@ -11,7 +11,7 @@ export interface PreviewRenderResult {
 // - When the size exceeds the max, the least recently used (oldest) entry is evicted.
 // This bounds memory usage while keeping recent previews fast. The default limit can
 // be overridden via PREVIEW_MAX_CACHE_ENTRIES (must be a positive integer).
-const DEFAULT_MAX_CACHE_ENTRIES = 10;
+const DEFAULT_MAX_CACHE_ENTRIES = 10; // Covers typical 1–2 formatter types with a handful of recent previews.
 
 const envMaxCacheEntries =
   typeof process !== "undefined" &&
