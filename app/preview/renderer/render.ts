@@ -13,8 +13,8 @@ export interface PreviewRenderResult {
 // The default limit (10 entries) is chosen as a conservative value based on:
 // - Typical usage of 1–2 formatter types per workspace.
 // - A small number of recent previews per formatter (roughly 3–5 that users switch between).
-// - Each entry being relatively small (JSON payload + rendered HTML), so 10 entries keeps
-//   cache memory usage well under a few hundred kilobytes in typical scenarios.
+// - Each entry is relatively small (JSON payload + rendered HTML), keeping memory use
+//   low without needing specific sizing assumptions.
 // The limit can be overridden via PREVIEW_MAX_CACHE_ENTRIES (must be a positive integer).
 const DEFAULT_MAX_CACHE_ENTRIES = 10;
 
