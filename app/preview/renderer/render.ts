@@ -15,6 +15,7 @@ export interface PreviewRenderResult {
 // - A small number of recent previews per formatter (roughly 3–5 that users switch between).
 // - Each entry is relatively small (JSON payload + rendered HTML), keeping memory use
 //   low without needing specific sizing assumptions.
+// When the limit is exceeded, the least recently used entry is evicted.
 // The limit can be overridden via PREVIEW_MAX_CACHE_ENTRIES (must be a positive integer).
 const DEFAULT_MAX_CACHE_ENTRIES = 10;
 
