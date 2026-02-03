@@ -34,7 +34,9 @@ export const getEditorState = (): EditorState => {
 };
 
 const notify = () => {
-  listeners.forEach((listener) => listener());
+  listeners.forEach((listener) => {
+    listener();
+  });
 };
 
 const bumpVersion = () => {
@@ -90,6 +92,12 @@ export const setJson = (json: unknown) => {
 
 export const setJsonParseError = (error?: string) => {
   state.parseError = error;
+  if (error) {
+    state.isValid = false;
+    state.validationErrors = [];
+  } else {
+    state.isValid = state.validationErrors.length === 0;
+  }
   bumpVersion();
   notify();
 };

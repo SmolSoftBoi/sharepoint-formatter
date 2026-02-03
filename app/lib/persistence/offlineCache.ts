@@ -2,6 +2,7 @@ type OfflineListener = (isOnline: boolean) => void;
 
 const listeners = new Set<OfflineListener>();
 let isOnline = typeof navigator !== "undefined" ? navigator.onLine : true;
+let initialized = false;
 
 const notify = () => {
   listeners.forEach((listener) => {
@@ -30,6 +31,10 @@ export const initOfflineCache = async () => {
   if (typeof window === "undefined") {
     return;
   }
+  if (initialized) {
+    return;
+  }
+  initialized = true;
 
   isOnline = navigator.onLine;
   notify();
@@ -51,6 +56,12 @@ export const teardownOfflineCache = () => {
   if (typeof window === "undefined") {
     return;
   }
+
+  if (!initialized) {
+    return;
+  }
+  initialized = false;
+  listeners.clear();
 
   window.removeEventListener("online", handleOnline);
   window.removeEventListener("offline", handleOffline);

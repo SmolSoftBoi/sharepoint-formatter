@@ -22,9 +22,13 @@ export const SampleDataPanel = ({
   const handleChange = (value: string) => {
     setRawValue(value);
     try {
-      const parsed = JSON.parse(value) as Record<string, unknown>;
-      onUpdate(parsed);
-      setParseError(null);
+      const parsed = JSON.parse(value) as unknown;
+      if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+        onUpdate(parsed as Record<string, unknown>);
+        setParseError(null);
+      } else {
+        setParseError("Sample data must be a JSON object.");
+      }
     } catch {
       setParseError("Invalid JSON");
     }

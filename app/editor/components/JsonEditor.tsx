@@ -16,6 +16,11 @@ interface JsonEditorProps {
   onParseError: (message?: string) => void;
 }
 
+const normalizeStringify = (input: unknown): string => {
+  const serialized = JSON.stringify(input, null, 2);
+  return typeof serialized === "string" ? serialized : "";
+};
+
 export const JsonEditor = ({
   value,
   onValidJson,
@@ -23,9 +28,10 @@ export const JsonEditor = ({
 }: JsonEditorProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+  const valueRef = useRef(value);
   const [isReady, setIsReady] = useState(false);
   const [fallbackText, setFallbackText] = useState(
-    JSON.stringify(value, null, 2),
+    normalizeStringify(value),
   );
   const onValidJsonRef = useRef(onValidJson);
   const onParseErrorRef = useRef(onParseError);
@@ -36,7 +42,11 @@ export const JsonEditor = ({
   }, [onValidJson, onParseError]);
 
   useEffect(() => {
-    const nextText = JSON.stringify(value, null, 2);
+    valueRef.current = value;
+  }, [value]);
+
+  useEffect(() => {
+    const nextText = normalizeStringify(value);
     if (editorRef.current) {
       const editor = editorRef.current;
       if (!editor.hasTextFocus() && editor.getValue() !== nextText) {
@@ -79,7 +89,7 @@ export const JsonEditor = ({
         };
       }
       const editorInstance = monaco.editor.create(containerRef.current, {
-        value: JSON.stringify(value, null, 2),
+        value: normalizeStringify(valueRef.current),
         language: "json",
         minimap: { enabled: false },
         automaticLayout: true,
