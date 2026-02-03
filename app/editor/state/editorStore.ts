@@ -18,12 +18,14 @@ export interface EditorState {
 
 const defaultFormatterType = FORMATTER_TYPES[0]?.id ?? "column";
 
+const initialValidation = validateFormatterJson(defaultFormatterType, {});
+
 const state: EditorState = {
   formatterTypeId: defaultFormatterType,
   json: {},
   sampleData: {},
-  isValid: true,
-  validationErrors: [],
+  isValid: initialValidation.valid,
+  validationErrors: initialValidation.errors,
 };
 
 const listeners = new Set<() => void>();
@@ -96,7 +98,7 @@ export const setJsonParseError = (error?: string) => {
     state.isValid = false;
     state.validationErrors = [];
   } else {
-    state.isValid = state.validationErrors.length === 0;
+    recomputeValidation();
   }
   bumpVersion();
   notify();
