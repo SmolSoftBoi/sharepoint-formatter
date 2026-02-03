@@ -46,6 +46,15 @@ const bumpVersion = () => {
 };
 
 const recomputeValidation = () => {
+  if (state.parseError) {
+    state.isValid = false;
+    state.validationErrors = [
+      {
+        message: state.parseError,
+      },
+    ];
+    return;
+  }
   const result = validateFormatterJson(state.formatterTypeId, state.json);
   state.isValid = result.valid;
   state.validationErrors = result.errors;
