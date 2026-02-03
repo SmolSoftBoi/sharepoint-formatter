@@ -44,7 +44,7 @@ The app uses local storage for drafts and a lightweight cache bootstrap. After t
 
 ## Project structure (high-level)
 
-```
+```text
 app/
 	editor/
 	preview/
