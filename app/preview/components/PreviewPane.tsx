@@ -1,3 +1,6 @@
+"use client";
+
+import DOMPurify from "dompurify";
 import { renderPreview } from "../renderer/render";
 
 interface PreviewPaneProps {
@@ -7,6 +10,7 @@ interface PreviewPaneProps {
 
 export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
   const { html, warnings } = renderPreview(json, sampleData);
+  const safeHtml = DOMPurify.sanitize(html);
 
   return (
     <section>
@@ -18,7 +22,7 @@ export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
           ))}
         </ul>
       )}
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+      <div dangerouslySetInnerHTML={{ __html: safeHtml }} />
     </section>
   );
 };

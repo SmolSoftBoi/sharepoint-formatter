@@ -25,8 +25,11 @@ export const GuidedPatternPanel = ({
 
   useEffect(() => {
     setSelectedId(patterns[0]?.id ?? null);
-    setValues({});
   }, [patterns]);
+
+  useEffect(() => {
+    setValues({});
+  }, [selectedId]);
 
   const handleInputChange = (id: string, value: string) => {
     setValues((prev) => ({ ...prev, [id]: value }));

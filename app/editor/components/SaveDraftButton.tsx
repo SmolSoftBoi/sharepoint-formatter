@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { saveDraft } from "../../lib/persistence/storage";
-import { useEditorState } from "../state/editorStore";
+import { setDraftId, useEditorState } from "../state/editorStore";
 
 const createDraftId = () => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -17,7 +17,12 @@ export const SaveDraftButton = () => {
 
   const handleSave = () => {
     const now = new Date();
-    const draftId = createDraftId();
+    const existingDraftId = editorState.draftId;
+    const draftId = existingDraftId ?? createDraftId();
+
+    if (!existingDraftId) {
+      setDraftId(draftId);
+    }
 
     saveDraft({
       metadata: {

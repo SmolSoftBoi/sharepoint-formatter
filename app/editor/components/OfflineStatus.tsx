@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  getOfflineStatus,
   initOfflineCache,
   subscribeOfflineStatus,
   teardownOfflineCache,
@@ -12,8 +11,8 @@ export const OfflineStatus = () => {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
 
   useEffect(() => {
-    initOfflineCache();
     const unsubscribe = subscribeOfflineStatus(setIsOnline);
+    initOfflineCache();
     return () => {
       unsubscribe();
       teardownOfflineCache();

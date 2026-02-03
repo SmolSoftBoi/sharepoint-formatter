@@ -8,6 +8,7 @@ import {
 export interface EditorState {
   formatterTypeId: FormatterTypeId;
   templateId?: string;
+  draftId?: string;
   json: unknown;
   sampleData: Record<string, unknown>;
   isValid: boolean;
@@ -69,6 +70,12 @@ export const setFormatterType = (formatterTypeId: FormatterTypeId) => {
 
 export const setTemplateId = (templateId?: string) => {
   state.templateId = templateId;
+  bumpVersion();
+  notify();
+};
+
+export const setDraftId = (draftId?: string) => {
+  state.draftId = draftId;
   bumpVersion();
   notify();
 };

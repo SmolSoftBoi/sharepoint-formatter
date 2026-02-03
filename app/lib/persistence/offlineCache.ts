@@ -4,7 +4,9 @@ const listeners = new Set<OfflineListener>();
 let isOnline = typeof navigator !== "undefined" ? navigator.onLine : true;
 
 const notify = () => {
-  listeners.forEach((listener) => listener(isOnline));
+  listeners.forEach((listener) => {
+    listener(isOnline);
+  });
 };
 
 export const getOfflineStatus = () => ({ isOnline });
