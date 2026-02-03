@@ -1,6 +1,6 @@
 # SharePoint Formatter
 
-Create, validate, preview, and export SharePoint list formatting JSON. Works offline, no account required.
+Create, validate, preview, and export SharePoint list formatting JSON. Offline-capable after initial load, no account required.
 
 ## Features
 
@@ -21,9 +21,12 @@ Create, validate, preview, and export SharePoint list formatting JSON. Works off
 
 ### Install
 
-1. Install dependencies.
-2. Download official SharePoint schemas.
-3. Start the dev server.
+1. Install dependencies:
+   - `yarn install`
+2. Download official SharePoint schemas:
+   - `yarn schemas:download`
+3. Start the dev server:
+   - `yarn dev`
 
 ## Scripts
 
@@ -46,10 +49,10 @@ The app uses local storage for drafts and a lightweight cache bootstrap. After t
 
 ```text
 app/
-	editor/
-	preview/
-	schemas/
-	lib/
+  editor/
+  preview/
+  schemas/
+  lib/
 tests/
 specs/
 ```
