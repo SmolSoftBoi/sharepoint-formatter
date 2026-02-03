@@ -1,5 +1,5 @@
 import Ajv from "ajv-draft-04";
-import { ErrorObject } from "ajv";
+import { ErrorObject, ValidateFunction } from "ajv";
 import { FormatterTypeId } from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
 
@@ -15,6 +15,7 @@ export interface ValidationResult {
 }
 
 const ajv = new Ajv({ allErrors: true, strict: false, unicodeRegExp: false });
+const formatterValidatorCache = new Map<FormatterTypeId, ValidateFunction>();
 
 const formatErrors = (errors: ErrorObject[] | null | undefined): ValidationError[] => {
   if (!errors) {
@@ -31,12 +32,17 @@ export const validateFormatterJson = (
   formatterTypeId: FormatterTypeId,
   json: unknown,
 ): ValidationResult => {
-  const schema = getSchemaForType(formatterTypeId);
-  const validate = ajv.compile(schema);
+  let validate = formatterValidatorCache.get(formatterTypeId);
+
+  if (!validate) {
+    const schema = getSchemaForType(formatterTypeId);
+    validate = ajv.compile(schema);
+    formatterValidatorCache.set(formatterTypeId, validate);
+  }
   const valid = validate(json);
 
   return {
     valid: Boolean(valid),
-    errors: formatErrors(validate.errors),
+    errors: valid ? [] : formatErrors(validate.errors),
   };
 };

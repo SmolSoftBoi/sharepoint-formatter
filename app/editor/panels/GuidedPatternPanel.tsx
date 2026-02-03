@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GuidedPattern, GUIDED_PATTERNS } from "../../templates/catalog/guidedPatterns";
 import { FormatterTypeId } from "../../lib/formatters/types";
 
@@ -22,6 +22,11 @@ export const GuidedPatternPanel = ({
   );
   const selectedPattern = patterns.find((pattern) => pattern.id === selectedId);
   const [values, setValues] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    setSelectedId(patterns[0]?.id ?? null);
+    setValues({});
+  }, [patterns]);
 
   const handleInputChange = (id: string, value: string) => {
     setValues((prev) => ({ ...prev, [id]: value }));
