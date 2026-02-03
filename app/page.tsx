@@ -23,6 +23,15 @@ import {
   useEditorState,
 } from "./editor/state/editorStore";
 
+/**
+ * Render the editor page UI that wires the centralized editor state to all panels and the live JSON preview.
+ *
+ * The component keeps the template list in sync with the selected formatter type, initializes default sample
+ * data when none is present, and provides handlers to apply templates or guided patterns which update the
+ * editor's template selection and JSON definition.
+ *
+ * @returns The Home page editor UI as a JSX element
+ */
 export default function HomePage() {
   const editorState = useEditorState();
   const templates = TEMPLATE_CATALOG.filter(
