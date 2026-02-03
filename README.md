@@ -57,4 +57,4 @@ specs/
 ## Notes
 
 - SharePoint schema files are downloaded into `app/schemas/sharepoint-v2/`.
-- Preview renderer is currently a placeholder and will evolve toward high-fidelity output.
+- Preview renderer has an initial implementation and will continue to evolve toward higher-fidelity SharePoint output.
