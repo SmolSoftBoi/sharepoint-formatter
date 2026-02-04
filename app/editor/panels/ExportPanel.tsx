@@ -1,6 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import {
+  Button,
+  MessageBar,
+  MessageBarBody,
+  MessageBarIntent,
+  MessageBarTitle,
+  makeStyles,
+  tokens,
+} from "@fluentui/react-components";
+import {
+  ArrowDownload24Regular,
+  Code24Regular,
+  Copy24Regular,
+} from "@fluentui/react-icons";
+import { PanelCard } from "../components/PanelCard";
 import { FormatterTypeId } from "../../lib/formatters/types";
 import {
   copyToClipboard,
@@ -15,14 +30,21 @@ interface ExportPanelProps {
 }
 
 export const ExportPanel = ({ formatterTypeId, json }: ExportPanelProps) => {
-  const [status, setStatus] = useState<string | null>(null);
+  const styles = useStyles();
+  const [status, setStatus] = useState<{
+    message: string;
+    intent: MessageBarIntent;
+  } | null>(null);
 
   const handleCopy = async (content: string, label: string) => {
     try {
       await copyToClipboard(content);
-      setStatus(`${label} copied`);
+      setStatus({ message: `${label} copied`, intent: "success" });
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Copy failed");
+      setStatus({
+        message: error instanceof Error ? error.message : "Copy failed",
+        intent: "error",
+      });
     } finally {
       setTimeout(() => setStatus(null), 2000);
     }
@@ -31,38 +53,49 @@ export const ExportPanel = ({ formatterTypeId, json }: ExportPanelProps) => {
   const handleDownload = () => {
     const content = getJsonText(json);
     downloadTextFile(`formatter-${formatterTypeId}.json`, content);
-    setStatus("Download started");
+    setStatus({ message: "Download started", intent: "success" });
     setTimeout(() => setStatus(null), 2000);
   };
 
   return (
-    <section>
-      <h2>Export</h2>
-      <div className="export-actions">
-        <button
-          type="button"
+    <PanelCard title="Export">
+      <div className={styles.actions}>
+        <Button
+          icon={<Copy24Regular />}
           onClick={() => handleCopy(getJsonText(json), "JSON")}
-          aria-label="Copy JSON to clipboard"
         >
           Copy JSON
-        </button>
-        <button type="button" onClick={handleDownload}>
+        </Button>
+        <Button icon={<ArrowDownload24Regular />} onClick={handleDownload}>
           Download JSON
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          icon={<Code24Regular />}
           onClick={() =>
             handleCopy(
               getSharePointSnippetText(formatterTypeId, json),
               "SharePoint snippet",
             )
           }
-          aria-label="Copy SharePoint snippet to clipboard"
         >
           Copy SharePoint Snippet
-        </button>
+        </Button>
       </div>
-      {status && <p>{status}</p>}
-    </section>
+      {status && (
+        <MessageBar intent={status.intent}>
+          <MessageBarBody>
+            <MessageBarTitle>Status</MessageBarTitle>
+            {status.message}
+          </MessageBarBody>
+        </MessageBar>
+      )}
+    </PanelCard>
   );
 };
+
+const useStyles = makeStyles({
+  actions: {
+    display: "grid",
+    gap: tokens.spacingVerticalS,
+  },
+});

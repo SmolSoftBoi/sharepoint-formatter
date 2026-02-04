@@ -2,6 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { editor as MonacoEditor } from "monaco-editor";
+import {
+  Field,
+  makeStyles,
+  Textarea,
+  tokens,
+} from "@fluentui/react-components";
+import { PanelCard } from "./PanelCard";
 import { sanitizeJsonString } from "../../lib/validation/sanitizeJson";
 
 type MonacoGlobal = typeof globalThis & {
@@ -26,6 +33,7 @@ export const JsonEditor = ({
   onValidJson,
   onParseError,
 }: JsonEditorProps) => {
+  const styles = useStyles();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
   const valueRef = useRef(value);
@@ -128,16 +136,27 @@ export const JsonEditor = ({
   };
 
   return (
-    <section>
-      <h2>JSON Editor</h2>
-      <div className="json-editor" ref={containerRef} />
+    <PanelCard title="JSON Editor">
+      <div className={styles.editor} ref={containerRef} />
       {!isReady && (
-        <textarea
-          value={fallbackText}
-          onChange={(event) => handleFallbackChange(event.target.value)}
-          rows={12}
-        />
+        <Field label="JSON source">
+          <Textarea
+            value={fallbackText}
+            onChange={(_event, data) => handleFallbackChange(data.value)}
+            rows={12}
+            resize="vertical"
+          />
+        </Field>
       )}
-    </section>
+    </PanelCard>
   );
 };
+
+const useStyles = makeStyles({
+  editor: {
+    minHeight: "260px",
+    borderRadius: tokens.borderRadiusMedium,
+    border: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+    overflow: "hidden",
+  },
+});

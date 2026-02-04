@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { makeStyles, tokens } from "@fluentui/react-components";
 import { FormatterTypePanel } from "./editor/panels/FormatterTypePanel";
 import { TemplatePanel } from "./editor/panels/TemplatePanel";
 import { SampleDataPanel } from "./editor/panels/SampleDataPanel";
@@ -33,6 +34,7 @@ import {
  * @returns The Home page editor UI as a JSX element
  */
 export default function HomePage() {
+  const styles = useStyles();
   const editorState = useEditorState();
   const templates = TEMPLATE_CATALOG.filter(
     (template) => template.formatterTypeId === editorState.formatterTypeId,
@@ -54,8 +56,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="editor-layout">
-      <aside className="editor-nav">
+    <div className={styles.layout}>
+      <aside className={styles.nav}>
         <FormatterTypePanel
           selectedId={editorState.formatterTypeId}
           onSelect={setFormatterType}
@@ -80,7 +82,7 @@ export default function HomePage() {
         <SaveDraftButton />
         <OfflineStatus />
       </aside>
-      <section className="editor-preview">
+      <section className={styles.preview}>
         <JsonEditor
           value={editorState.json}
           onValidJson={setJson}
@@ -99,3 +101,22 @@ export default function HomePage() {
     </div>
   );
 }
+
+const useStyles = makeStyles({
+  layout: {
+    display: "grid",
+    gridTemplateColumns: "320px 1fr",
+    gap: tokens.spacingHorizontalL,
+    alignItems: "start",
+  },
+  nav: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
+  },
+  preview: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
+  },
+});

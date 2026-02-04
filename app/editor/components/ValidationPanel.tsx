@@ -1,3 +1,15 @@
+"use client";
+
+import {
+  Body2,
+  Caption1,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  makeStyles,
+  tokens,
+} from "@fluentui/react-components";
+import { PanelCard } from "./PanelCard";
 import { ValidationError } from "../../lib/validation/validator";
 
 interface ValidationPanelProps {
@@ -6,34 +18,62 @@ interface ValidationPanelProps {
 }
 
 export const ValidationPanel = ({ parseError, errors }: ValidationPanelProps) => {
+  const styles = useStyles();
+
   if (!parseError && errors.length === 0) {
     return (
-      <section>
-        <h2>Validation</h2>
-        <p>No validation errors.</p>
-      </section>
+      <PanelCard title="Validation">
+        <Body2>No validation errors.</Body2>
+      </PanelCard>
     );
   }
 
   return (
-    <section>
-      <h2>Validation</h2>
-      {parseError && <p>JSON parse error: {parseError}</p>}
+    <PanelCard title="Validation">
+      {parseError && (
+        <MessageBar intent="error">
+          <MessageBarBody>
+            <MessageBarTitle>JSON parse error</MessageBarTitle>
+            {parseError}
+          </MessageBarBody>
+        </MessageBar>
+      )}
       {errors.length > 0 && (
-        <ul>
+        <ul className={styles.list}>
           {errors.map((error, index) => (
-            <li key={`${error.message}-${index}`}>
-              {error.message}
-              {error.path ? ` (${error.path})` : ""}
+            <li key={`${error.message}-${index}`} className={styles.item}>
+              <Body2>
+                {error.message}
+                {error.path ? ` (${error.path})` : ""}
+              </Body2>
               {error.hint ? (
-                <div>
-                  <em>Hint:</em> {error.hint}
-                </div>
+                <Caption1>
+                  <span className={styles.hintLabel}>Hint:</span> {error.hint}
+                </Caption1>
               ) : null}
             </li>
           ))}
         </ul>
       )}
-    </section>
+    </PanelCard>
   );
 };
+
+const useStyles = makeStyles({
+  list: {
+    listStyle: "none",
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalS,
+    margin: 0,
+    padding: 0,
+  },
+  item: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalXXS,
+  },
+  hintLabel: {
+    fontWeight: tokens.fontWeightSemibold,
+  },
+});

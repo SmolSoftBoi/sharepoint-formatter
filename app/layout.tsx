@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import "./styles/globals.css";
 import "./styles/accessibility.css";
+import { AppShell } from "./components/AppShell";
 
 export const metadata = {
   title: "SharePoint Formatter",
@@ -13,20 +14,11 @@ export const metadata = {
  * @param children - Content to render inside the layout's main area.
  * @returns The top-level JSX element containing `html`/`body`, a header with the app title, and a `main` element that wraps `children`.
  */
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <div className="app-shell">
-          <header className="app-header">
-            <h1>SharePoint Formatter</h1>
-          </header>
-          <main className="app-main">{children}</main>
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

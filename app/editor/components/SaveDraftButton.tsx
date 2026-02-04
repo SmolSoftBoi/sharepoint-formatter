@@ -1,6 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import {
+  Button,
+  Caption1,
+  makeStyles,
+  tokens,
+} from "@fluentui/react-components";
+import { Save24Regular } from "@fluentui/react-icons";
+import { PanelCard } from "./PanelCard";
 import { saveDraft } from "../../lib/persistence/storage";
 import { setDraftId, useEditorState } from "../state/editorStore";
 
@@ -13,6 +21,7 @@ const createDraftId = () => {
 
 export const SaveDraftButton = () => {
   const editorState = useEditorState();
+  const styles = useStyles();
   const [status, setStatus] = useState<string | null>(null);
 
   const handleSave = () => {
@@ -40,11 +49,21 @@ export const SaveDraftButton = () => {
   };
 
   return (
-    <div>
-      <button type="button" onClick={handleSave} aria-label="Save draft locally">
+    <PanelCard title="Drafts">
+      <Button icon={<Save24Regular />} onClick={handleSave}>
         Save Draft
-      </button>
-      {status && <span>{status}</span>}
-    </div>
+      </Button>
+      {status && (
+        <Caption1 role="status" className={styles.status}>
+          {status}
+        </Caption1>
+      )}
+    </PanelCard>
   );
 };
+
+const useStyles = makeStyles({
+  status: {
+    color: tokens.colorNeutralForeground3,
+  },
+});

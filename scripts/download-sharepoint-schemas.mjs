@@ -2,6 +2,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const schemaDir = path.resolve(process.cwd(), "app", "schemas", "sharepoint-v2");
+const isOffline =
+  process.env.SCHEMAS_OFFLINE?.toLowerCase() === "true" ||
+  process.env.SCHEMAS_OFFLINE === "1";
 
 const schemas = [
   {
@@ -31,6 +34,11 @@ const schemas = [
 ];
 
 const run = async () => {
+  if (isOffline) {
+    console.log("SCHEMAS_OFFLINE=true; skipping SharePoint schema download.");
+    return;
+  }
+
   await mkdir(schemaDir, { recursive: true });
 
   for (const schema of schemas) {
