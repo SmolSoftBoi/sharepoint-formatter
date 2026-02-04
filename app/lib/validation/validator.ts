@@ -1,7 +1,7 @@
 import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
 import { FormatterTypeId } from "../formatters/types";
-import { getSchemaForType } from "./schemaLoader";
+import { getAllSchemas, getSchemaForType } from "./schemaLoader";
 
 export interface ValidationError {
   message: string;
@@ -16,6 +16,22 @@ export interface ValidationResult {
 
 const ajv = new Ajv({ allErrors: true, strict: false, unicodeRegExp: false });
 const formatterValidatorCache = new Map<FormatterTypeId, ValidateFunction>();
+let schemasRegistered = false;
+
+const registerSchemas = () => {
+  if (schemasRegistered) {
+    return;
+  }
+  getAllSchemas().forEach((schema) => {
+    try {
+      ajv.addSchema(schema);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Schema registration failed.";
+      console.error(message);
+    }
+  });
+  schemasRegistered = true;
+};
 
 const buildHint = (error: ErrorObject): string | undefined => {
   switch (error.keyword) {
@@ -69,9 +85,24 @@ export const validateFormatterJson = (
   let validate = formatterValidatorCache.get(formatterTypeId);
 
   if (!validate) {
-    const schema = getSchemaForType(formatterTypeId);
-    validate = ajv.compile(schema);
-    formatterValidatorCache.set(formatterTypeId, validate);
+    try {
+      registerSchemas();
+      const schema = getSchemaForType(formatterTypeId);
+      validate = ajv.compile(schema);
+      formatterValidatorCache.set(formatterTypeId, validate);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Schema compilation failed.";
+      console.error(message);
+      return {
+        valid: false,
+        errors: [
+          {
+            message,
+            hint: "Schema compilation failed. Check schema references.",
+          },
+        ],
+      };
+    }
   }
   const valid = validate(json);
 
