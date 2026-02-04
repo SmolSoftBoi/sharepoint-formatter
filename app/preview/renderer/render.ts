@@ -462,8 +462,8 @@ const renderNode = (
     if (!hasImgSrc) {
       warnings.push("Image element missing src attribute.");
     }
-    return `<img ${attributeString} style="${styleString}" />`;
+    return `<img ${attributeString} style="${escapeAttr(styleString)}" />`;
   }
 
-  return `<${elmType} ${attributeString} style="${styleString}">${content}</${elmType}>`;
+  return `<${elmType} ${attributeString} style="${escapeAttr(styleString)}">${content}</${elmType}>`;
 };
