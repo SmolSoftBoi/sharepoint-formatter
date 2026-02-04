@@ -9,7 +9,7 @@ const schemas = [
     filename: "column-formatting.json",
   },
   {
-    url: "https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json",
+    url: "https://developer.microsoft.com/json-schemas/sp/v2/view-formatting.schema.json",
     filename: "view-formatting.json",
   },
   {
