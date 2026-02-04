@@ -19,7 +19,7 @@ The system SHALL use Fluent UI icons from `@fluentui/react-icons` for UI iconogr
 - **THEN** it is sourced from `@fluentui/react-icons`
 
 ### Requirement: Full component migration
-The system SHALL migrate all user‑facing UI components to Fluent UI equivalents so no legacy UI primitives remain.
+The system SHALL migrate all user-facing UI components to Fluent UI equivalents so no legacy UI primitives remain.
 
 #### Scenario: Primary UI primitives are Fluent UI components
 - **WHEN** the main formatter view renders

@@ -42,7 +42,11 @@ export const SampleDataPanel = ({
     <PanelCard title="Sample Data">
       <Field
         label="Sample data JSON"
-        validationMessage={parseError ? `Invalid sample JSON: ${parseError}` : undefined}
+        validationMessage={
+          parseError
+            ? (parseError === "Invalid JSON" ? "Invalid sample JSON." : parseError)
+            : undefined
+        }
         validationState={parseError ? "error" : "none"}
       >
         <Textarea
