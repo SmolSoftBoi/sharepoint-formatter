@@ -12,6 +12,11 @@ build/
 # Coverage
 coverage/
 
+# Playwright
+.playwright/
+playwright-report/
+test-results/
+
 # OS / Editor
 .DS_Store
 Thumbs.db

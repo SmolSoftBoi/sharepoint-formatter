@@ -1,6 +1,7 @@
 "use client";
 
-import DOMPurify from "dompurify";
+import createDOMPurify from "dompurify";
+import { useMemo } from "react";
 import { renderPreview } from "../renderer/render";
 
 interface PreviewPaneProps {
@@ -10,7 +11,13 @@ interface PreviewPaneProps {
 
 export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
   const { html, warnings } = renderPreview(json, sampleData);
-  const safeHtml = DOMPurify.sanitize(html);
+  const purifier = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    return createDOMPurify(window);
+  }, []);
+  const safeHtml = purifier ? purifier.sanitize(html) : "";
 
   return (
     <section>
@@ -22,7 +29,10 @@ export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
           ))}
         </ul>
       )}
-      <div dangerouslySetInnerHTML={{ __html: safeHtml }} />
+      <div
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: safeHtml }}
+      />
     </section>
   );
 };
