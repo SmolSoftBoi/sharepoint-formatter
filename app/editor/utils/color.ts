@@ -37,7 +37,10 @@ export const normalizeHexInput = (value: string): string => {
 };
 
 const rgbToHex = (r: number, g: number, b: number): string => {
-  const toHex = (channel: number) => Math.round(channel).toString(16).padStart(2, "0");
+  const toHex = (channel: number) =>
+    Math.min(255, Math.max(0, Math.round(channel)))
+      .toString(16)
+      .padStart(2, "0");
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 

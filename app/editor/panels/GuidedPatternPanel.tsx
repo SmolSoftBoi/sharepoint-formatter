@@ -87,17 +87,19 @@ export const GuidedPatternPanel = ({
               const rawHex = values[input.id] ?? "#000000";
               const resolvedHex = toHexColor(rawHex) ?? "#000000";
               const hsvColor = hexToHsv(resolvedHex);
+              const labelId = `${input.id}-label`;
 
               return (
                 <div key={input.id} className={styles.colorField}>
-                  <Label>{input.label}</Label>
+                  <Label id={labelId}>{input.label}</Label>
                   <div className={styles.colorPicker}>
                     <ColorPicker
+                      aria-labelledby={labelId}
                       color={hsvColor}
                       onColorChange={(_event, data) => handleColorChange(input.id, data.color)}
                     >
-                      <ColorArea />
-                      <ColorSlider />
+                      <ColorArea aria-labelledby={labelId} />
+                      <ColorSlider aria-labelledby={labelId} />
                     </ColorPicker>
                   </div>
                   <Input
