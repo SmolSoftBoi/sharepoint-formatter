@@ -80,6 +80,7 @@ export const AppShell = ({ children }: AppShellProps) => {
     <FluentProvider
       theme={scheme === "dark" ? webDarkTheme : webLightTheme}
       className={styles.shell}
+      suppressHydrationWarning
     >
       <header className={styles.header}>
         <div className={styles.headerContent}>
