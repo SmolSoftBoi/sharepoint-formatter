@@ -105,9 +105,13 @@ export default function HomePage() {
 const useStyles = makeStyles({
   layout: {
     display: "grid",
-    gridTemplateColumns: "320px 1fr",
+    gridTemplateColumns: "minmax(0, 320px) minmax(0, 1fr)",
     gap: tokens.spacingHorizontalL,
     alignItems: "start",
+    "@media (max-width: 960px)": {
+      gridTemplateColumns: "minmax(0, 1fr)",
+      gap: tokens.spacingVerticalL,
+    },
   },
   nav: {
     display: "flex",

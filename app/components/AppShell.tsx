@@ -45,11 +45,22 @@ interface AppShellProps {
   children: ReactNode;
 }
 
+const getPreferredScheme = (): ColorScheme => {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return "light";
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
 export const AppShell = ({ children }: AppShellProps) => {
   const styles = useStyles();
-  const [scheme, setScheme] = useState<ColorScheme>("light");
+  const [scheme, setScheme] = useState<ColorScheme>(getPreferredScheme);
 
   useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return;
+    }
+
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
       setScheme(media.matches ? "dark" : "light");
