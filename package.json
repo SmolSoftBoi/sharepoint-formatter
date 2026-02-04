@@ -8,9 +8,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "yarn schemas:download",
     "start": "next start",
     "lint": "eslint .",
     "test": "jest",
+    "pretest": "yarn schemas:download",
     "schemas:download": "node scripts/download-sharepoint-schemas.mjs"
   },
   "dependencies": {
