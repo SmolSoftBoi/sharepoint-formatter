@@ -17,6 +17,39 @@ export interface ValidationResult {
 const ajv = new Ajv({ allErrors: true, strict: false, unicodeRegExp: false });
 const formatterValidatorCache = new Map<FormatterTypeId, ValidateFunction>();
 
+const buildHint = (error: ErrorObject): string | undefined => {
+  switch (error.keyword) {
+    case "required": {
+      const missing = (error.params as { missingProperty?: string }).missingProperty;
+      return missing ? `Add required property "${missing}".` : undefined;
+    }
+    case "type": {
+      const expected = (error.params as { type?: string }).type;
+      return expected ? `Expected type "${expected}".` : "Update the value to the expected type.";
+    }
+    case "enum":
+      return "Update the value to one of the allowed options.";
+    case "additionalProperties": {
+      const property = (error.params as { additionalProperty?: string }).additionalProperty;
+      return property ? `Remove unsupported property "${property}".` : "Remove unsupported properties.";
+    }
+    case "minLength":
+      return "Provide a longer value.";
+    case "maxLength":
+      return "Provide a shorter value.";
+    case "minimum":
+    case "exclusiveMinimum":
+      return "Provide a number that is large enough.";
+    case "maximum":
+    case "exclusiveMaximum":
+      return "Provide a number that is small enough.";
+    case "pattern":
+      return "Match the required format.";
+    default:
+      return undefined;
+  }
+};
+
 const formatErrors = (errors: ErrorObject[] | null | undefined): ValidationError[] => {
   if (!errors) {
     return [];
@@ -25,6 +58,7 @@ const formatErrors = (errors: ErrorObject[] | null | undefined): ValidationError
   return errors.map((error) => ({
     message: error.message ?? "Schema validation error",
     path: error.instancePath || error.schemaPath,
+    hint: buildHint(error),
   }));
 };
 

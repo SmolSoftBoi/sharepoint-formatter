@@ -25,6 +25,11 @@ export const ValidationPanel = ({ parseError, errors }: ValidationPanelProps) =>
             <li key={`${error.message}-${index}`}>
               {error.message}
               {error.path ? ` (${error.path})` : ""}
+              {error.hint ? (
+                <div>
+                  <em>Hint:</em> {error.hint}
+                </div>
+              ) : null}
             </li>
           ))}
         </ul>
