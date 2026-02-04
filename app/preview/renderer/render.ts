@@ -388,11 +388,11 @@ const resolveExpression = (
     const current = pickCurrentFieldValue(sampleData);
     const path = raw.replace("@currentField", "").replace(/^\./, "");
     if (!path) {
-      return current ? String(current) : "";
+      return current !== null && current !== undefined ? String(current) : "";
     }
     if (current && typeof current === "object") {
       const value = (current as Record<string, unknown>)[path];
-      return value ? String(value) : "";
+      return value !== null && value !== undefined ? String(value) : "";
     }
     return "";
   }
@@ -401,7 +401,7 @@ const resolveExpression = (
   if (fieldMatch) {
     const field = fieldMatch[1].replace(/^\$/, "");
     const value = sampleData[field];
-    return value ? String(value) : "";
+    return value !== null && value !== undefined ? String(value) : "";
   }
 
   return raw;
