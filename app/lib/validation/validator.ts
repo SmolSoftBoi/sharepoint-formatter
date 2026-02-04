@@ -1,7 +1,7 @@
 import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
-import { FormatterTypeId } from "../formatters/types";
-import { getAllSchemas, getSchemaForType } from "./schemaLoader";
+import { FormatterTypeId, FORMATTER_TYPES } from "../formatters/types";
+import { getSchemaForType } from "./schemaLoader";
 
 export interface ValidationError {
   message: string;
@@ -22,9 +22,10 @@ const registerSchemas = () => {
   if (schemasRegistered) {
     return;
   }
-  getAllSchemas().forEach((schema) => {
+  FORMATTER_TYPES.forEach((type) => {
     try {
-      ajv.addSchema(schema);
+      const schema = getSchemaForType(type.id);
+      ajv.addSchema(schema, type.id);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema registration failed.";
       console.error(message);
