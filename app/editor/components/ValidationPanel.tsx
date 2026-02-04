@@ -39,7 +39,7 @@ export const ValidationPanel = ({ parseError, errors }: ValidationPanelProps) =>
         </MessageBar>
       )}
       {errors.length > 0 && (
-        <ul className={styles.list}>
+        <ul className={styles.list} role="alert">
           {errors.map((error, index) => (
             <li key={`${error.message}-${index}`} className={styles.item}>
               <Body2>
