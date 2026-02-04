@@ -38,6 +38,9 @@ export const GuidedPatternPanel = ({
   return (
     <section>
       <h2>Guided Patterns</h2>
+      {patterns.length === 0 ? (
+        <p>No guided patterns available for this formatter type.</p>
+      ) : (
       <select
         value={selectedId ?? ""}
         onChange={(event) => setSelectedId(event.target.value)}
@@ -49,6 +52,7 @@ export const GuidedPatternPanel = ({
           </option>
         ))}
       </select>
+      )}
       {selectedPattern && (
         <div>
           {selectedPattern.inputs.map((input) => (
