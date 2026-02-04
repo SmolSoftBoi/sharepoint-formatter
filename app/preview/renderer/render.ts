@@ -279,6 +279,7 @@ const sanitizeAttributes = (
   const parts: string[] = [];
   let hasTargetBlank = false;
   let hasRel = false;
+  let hasImgSrc = false;
 
   for (const [key, rawValue] of Object.entries(attributes)) {
     if (rawValue === undefined || rawValue === null) {
@@ -297,6 +298,9 @@ const sanitizeAttributes = (
         continue;
       }
       parts.push(`${key}="${escapeAttr(sanitized)}"`);
+      if (key === "src") {
+        hasImgSrc = true;
+      }
       continue;
     }
 
@@ -314,7 +318,10 @@ const sanitizeAttributes = (
     parts.push('rel="noopener noreferrer"');
   }
 
-  return parts.join(" ");
+  return {
+    attributeString: parts.join(" "),
+    hasImgSrc,
+  };
 };
 
 const sanitizeStyle = (
@@ -440,18 +447,23 @@ const renderNode = (
 
   const styleString = sanitizeStyle(style, sampleData, warnings);
 
-  const attributeString = sanitizeAttributes(elmType, attributes, sampleData, warnings);
+  const { attributeString, hasImgSrc } = sanitizeAttributes(
+    elmType,
+    attributes,
+    sampleData,
+    warnings,
+  );
 
   const textPart = txtContent ? escapeHtml(txtContent) : "";
   const childParts = children.map((child) => renderNode(child, sampleData, warnings));
   const content = [textPart, ...childParts].join("");
 
   if (elmType === "img") {
-    if (!attributes.src) {
+    if (!hasImgSrc) {
       warnings.push("Image element missing src attribute.");
     }
-    return `<img ${attributeString} style="${escapeAttr(styleString)}" />`;
+    return `<img ${attributeString} style="${styleString}" />`;
   }
 
-  return `<${elmType} ${attributeString} style="${escapeAttr(styleString)}">${content}</${elmType}>`;
+  return `<${elmType} ${attributeString} style="${styleString}">${content}</${elmType}>`;
 };
