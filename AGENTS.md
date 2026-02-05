@@ -15,7 +15,13 @@ tests/
 
 ## Commands
 
-yarn test && yarn lint
+- `yarn dev` (start dev server)
+- `yarn build` (production build; runs `yarn schemas:download` via `prebuild`)
+- `yarn start` (run production server)
+- `yarn test` (runs `yarn schemas:download` via `pretest`)
+- `yarn lint`
+- `yarn schemas:download` (fetch SharePoint schemas)
+- `SCHEMAS_OFFLINE=1 yarn test` (skip schema download when offline/CI)
 
 ## Code Style
 
