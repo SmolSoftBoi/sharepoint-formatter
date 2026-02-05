@@ -1,6 +1,10 @@
 import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
-import { FormatterTypeId, FORMATTER_TYPES } from "../formatters/types";
+import {
+  FormatterTypeId,
+  FORMATTER_TYPE_BY_ID,
+  FORMATTER_TYPES,
+} from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
 
 export interface ValidationError {
@@ -29,18 +33,19 @@ const COMMAND_BAR_SCHEMA_PLACEHOLDER: Record<string, unknown> = {
   additionalProperties: true,
 };
 
-const FORMATTER_TYPE_META_BY_ID: ReadonlyMap<FormatterTypeId, { schemaFile: string }> = new Map(
-  FORMATTER_TYPES.map((type) => [type.id, { schemaFile: type.schemaFile }] as const),
-);
-
 const getSchemaFileForFormatterType = (formatterTypeId: FormatterTypeId): string => {
-  const meta = FORMATTER_TYPE_META_BY_ID.get(formatterTypeId);
-  if (!meta) {
+  const meta = FORMATTER_TYPE_BY_ID[formatterTypeId];
+  if (meta === undefined) {
     throw new Error(`Unknown formatter type "${formatterTypeId}".`);
   }
   return meta.schemaFile;
 };
 
+// SharePoint hosts formatting schemas at URLs like:
+//   https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json
+// while our formatter metadata stores the base filename (e.g. "column-formatting.json").
+// This helper maps the local filename to the SharePoint schema URL by replacing the
+// trailing ".json" with ".schema.json" before appending it to the SharePoint base URL.
 const schemaUrlForFile = (schemaFile: string): string => {
   return `${SHAREPOINT_SCHEMA_BASE_URL}/${schemaFile.replace(/\.json$/u, ".schema.json")}`;
 };
@@ -71,7 +76,9 @@ const registerSchemas = () => {
   }
 
   try {
-    ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
+    if (!ajv.getSchema(COMMAND_BAR_SCHEMA_URL)) {
+      ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Schema registration failed.";
     console.error(
@@ -83,6 +90,9 @@ const registerSchemas = () => {
     let schemaUrl: string | undefined;
     try {
       schemaUrl = schemaUrlForFormatterType(formatterTypeId);
+      if (ajv.getSchema(schemaUrl)) {
+        return;
+      }
       const schema = getSchemaForType(formatterTypeId);
       ajv.addSchema(schema, schemaUrl);
     } catch (error) {
@@ -93,7 +103,13 @@ const registerSchemas = () => {
       );
     }
   });
-  schemasRegistered = true;
+
+  const requiredSchemaUrls = [
+    COMMAND_BAR_SCHEMA_URL,
+    ...schemaRegistrationOrder.map(schemaUrlForFormatterType),
+  ];
+
+  schemasRegistered = requiredSchemaUrls.every((schemaUrl) => Boolean(ajv.getSchema(schemaUrl)));
 };
 
 const buildHint = (error: ErrorObject): string | undefined => {
