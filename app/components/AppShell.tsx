@@ -15,6 +15,7 @@ import {
 const useStyles = makeStyles({
   shell: {
     minHeight: "100vh",
+    maxHeight: "100vh",
     backgroundColor: tokens.colorNeutralBackground2,
     color: tokens.colorNeutralForeground1,
     fontFamily: tokens.fontFamilyBase,
@@ -34,7 +35,8 @@ const useStyles = makeStyles({
   },
   main: {
     flex: 1,
-    padding: [tokens.spacingVerticalL, tokens.spacingHorizontalL]
+    minHeight: "100%",
+    maxHeight: "100%"
   },
 });
 

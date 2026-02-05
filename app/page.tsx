@@ -106,21 +106,31 @@ const useStyles = makeStyles({
   layout: {
     display: "grid",
     gridTemplateColumns: "minmax(0, 320px) minmax(0, 1fr)",
-    gap: tokens.spacingHorizontalL,
-    alignItems: "start",
+    gap: 0,
+    alignItems: "stretch",
     "@media (max-width: 960px)": {
       gridTemplateColumns: "minmax(0, 1fr)",
       gap: tokens.spacingVerticalL,
     },
+    minHeight: "100%",
+    maxHeight: "100%"
   },
   nav: {
     display: "flex",
     flexDirection: "column",
-    gap: tokens.spacingVerticalM,
+    padding: [tokens.spacingVerticalM, tokens.spacingHorizontalL],
+    backgroundColor: tokens.colorNeutralBackground4,
+    borderRightStyle: "solid",
+    borderRightWidth: tokens.strokeWidthThin,
+    borderRightColor: tokens.colorNeutralStroke4,
+    overflowY: "auto"
   },
   preview: {
     display: "flex",
     flexDirection: "column",
     gap: tokens.spacingVerticalM,
+    padding: [tokens.spacingVerticalM, tokens.spacingHorizontalL],
+    backgroundColor: tokens.colorNeutralBackground2,
+    overflowY: "auto"
   },
 });
