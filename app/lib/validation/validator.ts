@@ -1,6 +1,9 @@
 import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
-import { FormatterTypeId, FORMATTER_TYPES } from "../formatters/types";
+import {
+  FormatterTypeId,
+  FORMATTER_TYPE_BY_ID,
+} from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
 
 export interface ValidationError {
@@ -18,14 +21,50 @@ const ajv = new Ajv({ allErrors: true, strict: false, unicodeRegExp: false });
 const formatterValidatorCache = new Map<FormatterTypeId, ValidateFunction>();
 let schemasRegistered = false;
 
+const SHAREPOINT_SCHEMA_BASE_URL = "https://developer.microsoft.com/json-schemas/sp/v2";
+const COMMAND_BAR_SCHEMA_URL = `${SHAREPOINT_SCHEMA_BASE_URL}/command-bar-formatting.schema.json`;
+const COMMAND_BAR_SCHEMA_PLACEHOLDER: Record<string, unknown> = {
+  $schema: "http://json-schema.org/draft-04/schema#",
+  title: "CommandBarFormatter JSON",
+  description:
+    "Permissive placeholder schema for command bar customisation options (bundled schemas reference this URL).",
+  type: "object",
+  additionalProperties: true,
+};
+
+const schemaUrlForFile = (schemaFile: string): string => {
+  return `${SHAREPOINT_SCHEMA_BASE_URL}/${schemaFile.replace(/\.json$/u, ".schema.json")}`;
+};
+
+const schemaUrlForFormatterType = (formatterTypeId: FormatterTypeId): string => {
+  return schemaUrlForFile(FORMATTER_TYPE_BY_ID[formatterTypeId].schemaFile);
+};
+
 const registerSchemas = () => {
   if (schemasRegistered) {
     return;
   }
-  FORMATTER_TYPES.forEach((type) => {
+
+  try {
+    ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Schema registration failed.";
+    console.error(message);
+  }
+
+  const registerOrder: FormatterTypeId[] = [
+    "column",
+    "row",
+    "tile",
+    "board",
+    "calendar",
+    "view",
+  ];
+
+  registerOrder.forEach((formatterTypeId) => {
     try {
-      const schema = getSchemaForType(type.id);
-      ajv.addSchema(schema, type.id);
+      const schema = getSchemaForType(formatterTypeId);
+      ajv.addSchema(schema, schemaUrlForFormatterType(formatterTypeId));
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema registration failed.";
       console.error(message);
@@ -88,8 +127,12 @@ export const validateFormatterJson = (
   if (!validate) {
     try {
       registerSchemas();
-      const schema = getSchemaForType(formatterTypeId);
-      validate = ajv.compile(schema);
+      validate = ajv.getSchema(schemaUrlForFormatterType(formatterTypeId));
+
+      if (!validate) {
+        const schema = getSchemaForType(formatterTypeId);
+        validate = ajv.compile(schema);
+      }
       formatterValidatorCache.set(formatterTypeId, validate);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema compilation failed.";
