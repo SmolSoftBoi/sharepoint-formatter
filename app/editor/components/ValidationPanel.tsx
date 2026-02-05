@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Body1,
   Caption1,
   MessageBar,
   MessageBarBody,

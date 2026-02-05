@@ -11,7 +11,6 @@ import {
   PlugConnectedRegular,
   PlugDisconnectedRegular,
 } from "@fluentui/react-icons";
-import { PanelCard } from "./PanelCard";
 import {
   initOfflineCache,
   subscribeOfflineStatus,
@@ -73,6 +72,6 @@ const useStyles = makeStyles({
     gap: tokens.spacingVerticalXS,
   },
   helper: {
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
