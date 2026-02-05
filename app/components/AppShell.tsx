@@ -3,10 +3,9 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import {
-  Body2,
   FluentProvider,
   makeStyles,
-  shorthands,
+  Subtitle1,
   Title1,
   tokens,
   webDarkTheme,
@@ -16,7 +15,7 @@ import {
 const useStyles = makeStyles({
   shell: {
     minHeight: "100vh",
-    backgroundColor: tokens.colorNeutralBackground1,
+    backgroundColor: tokens.colorNeutralBackground2,
     color: tokens.colorNeutralForeground1,
     fontFamily: tokens.fontFamilyBase,
     lineHeight: tokens.lineHeightBase300,
@@ -24,9 +23,9 @@ const useStyles = makeStyles({
     flexDirection: "column",
   },
   header: {
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderBottom(tokens.strokeWidthThin, "solid", tokens.colorNeutralStroke1),
-    ...shorthands.padding(tokens.spacingVerticalM, tokens.spacingHorizontalL),
+    color: tokens.colorNeutralForegroundOnBrand,
+    backgroundColor: tokens.colorBrandBackground,
+    padding: [tokens.spacingVerticalM, tokens.spacingHorizontalL]
   },
   headerContent: {
     display: "flex",
@@ -35,7 +34,7 @@ const useStyles = makeStyles({
   },
   main: {
     flex: 1,
-    ...shorthands.padding(tokens.spacingVerticalL, tokens.spacingHorizontalL),
+    padding: [tokens.spacingVerticalL, tokens.spacingHorizontalL]
   },
 });
 
@@ -85,9 +84,9 @@ export const AppShell = ({ children }: AppShellProps) => {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <Title1>SharePoint Formatter</Title1>
-          <Body2>
+          <Subtitle1>
             Create, validate, preview, and export SharePoint list formatting JSON.
-          </Body2>
+          </Subtitle1>
         </div>
       </header>
       <main className={styles.main}>{children}</main>
