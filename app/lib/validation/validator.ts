@@ -1,9 +1,6 @@
 import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
-import {
-  FormatterTypeId,
-  FORMATTER_TYPE_BY_ID,
-} from "../formatters/types";
+import { FormatterTypeId, FORMATTER_TYPES } from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
 
 export interface ValidationError {
@@ -32,13 +29,41 @@ const COMMAND_BAR_SCHEMA_PLACEHOLDER: Record<string, unknown> = {
   additionalProperties: true,
 };
 
+const FORMATTER_TYPE_META_BY_ID: ReadonlyMap<FormatterTypeId, { schemaFile: string }> = new Map(
+  FORMATTER_TYPES.map((type) => [type.id, { schemaFile: type.schemaFile }] as const),
+);
+
+const getSchemaFileForFormatterType = (formatterTypeId: FormatterTypeId): string => {
+  const meta = FORMATTER_TYPE_META_BY_ID.get(formatterTypeId);
+  if (!meta) {
+    throw new Error(`Unknown formatter type "${formatterTypeId}".`);
+  }
+  return meta.schemaFile;
+};
+
 const schemaUrlForFile = (schemaFile: string): string => {
   return `${SHAREPOINT_SCHEMA_BASE_URL}/${schemaFile.replace(/\.json$/u, ".schema.json")}`;
 };
 
 const schemaUrlForFormatterType = (formatterTypeId: FormatterTypeId): string => {
-  return schemaUrlForFile(FORMATTER_TYPE_BY_ID[formatterTypeId].schemaFile);
+  return schemaUrlForFile(getSchemaFileForFormatterType(formatterTypeId));
 };
+
+const schemaRegistrationOrder: FormatterTypeId[] = (() => {
+  const priorityByFormatterTypeId: Partial<Record<FormatterTypeId, number>> = {
+    column: -100,
+    view: 100,
+  };
+
+  return FORMATTER_TYPES
+    .map((type, index) => ({
+      formatterTypeId: type.id,
+      priority: priorityByFormatterTypeId[type.id] ?? 0,
+      index,
+    }))
+    .sort((a, b) => a.priority - b.priority || a.index - b.index)
+    .map((entry) => entry.formatterTypeId);
+})();
 
 const registerSchemas = () => {
   if (schemasRegistered) {
@@ -49,25 +74,23 @@ const registerSchemas = () => {
     ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Schema registration failed.";
-    console.error(message);
+    console.error(
+      `[schemas] Failed to register command-bar schema (${COMMAND_BAR_SCHEMA_URL}): ${message}`,
+    );
   }
 
-  const registerOrder: FormatterTypeId[] = [
-    "column",
-    "row",
-    "tile",
-    "board",
-    "calendar",
-    "view",
-  ];
-
-  registerOrder.forEach((formatterTypeId) => {
+  schemaRegistrationOrder.forEach((formatterTypeId) => {
+    let schemaUrl: string | undefined;
     try {
+      schemaUrl = schemaUrlForFormatterType(formatterTypeId);
       const schema = getSchemaForType(formatterTypeId);
-      ajv.addSchema(schema, schemaUrlForFormatterType(formatterTypeId));
+      ajv.addSchema(schema, schemaUrl);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema registration failed.";
-      console.error(message);
+      const urlSuffix = schemaUrl ? ` (${schemaUrl})` : "";
+      console.error(
+        `[schemas] Failed to register schema for "${formatterTypeId}"${urlSuffix}: ${message}`,
+      );
     }
   });
   schemasRegistered = true;
@@ -125,9 +148,11 @@ export const validateFormatterJson = (
   let validate = formatterValidatorCache.get(formatterTypeId);
 
   if (!validate) {
+    let schemaUrl: string | undefined;
     try {
       registerSchemas();
-      validate = ajv.getSchema(schemaUrlForFormatterType(formatterTypeId));
+      schemaUrl = schemaUrlForFormatterType(formatterTypeId);
+      validate = ajv.getSchema(schemaUrl);
 
       if (!validate) {
         const schema = getSchemaForType(formatterTypeId);
@@ -136,7 +161,8 @@ export const validateFormatterJson = (
       formatterValidatorCache.set(formatterTypeId, validate);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema compilation failed.";
-      console.error(message);
+      const urlSuffix = schemaUrl ? ` (${schemaUrl})` : "";
+      console.error(`[schemas] Schema compilation failed for "${formatterTypeId}"${urlSuffix}: ${message}`);
       return {
         valid: false,
         errors: [
