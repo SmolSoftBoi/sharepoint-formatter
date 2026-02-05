@@ -1,4 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
+import { Field, Textarea } from "@fluentui/react-components";
+import { PanelCard } from "../components/PanelCard";
 
 interface SampleDataPanelProps {
   sampleData: Record<string, unknown>;
@@ -30,22 +34,24 @@ export const SampleDataPanel = ({
         setParseError("Sample data must be a JSON object.");
       }
     } catch {
-      setParseError("Invalid JSON");
+      setParseError("Invalid sample JSON.");
     }
   };
 
   return (
-    <section>
-      <h2>Sample Data</h2>
-      <textarea
-        value={rawValue}
-        onChange={(event) => handleChange(event.target.value)}
-        rows={8}
-        aria-label="Sample data JSON"
-      />
-      {parseError && (
-        <p role="alert">Invalid sample JSON: {parseError}</p>
-      )}
-    </section>
+    <PanelCard title="Sample Data">
+      <Field
+        label="Sample data JSON"
+        validationMessage={parseError ?? undefined}
+        validationState={parseError ? "error" : "none"}
+      >
+        <Textarea
+          value={rawValue}
+          onChange={(_event, data) => handleChange(data.value)}
+          rows={8}
+          resize="vertical"
+        />
+      </Field>
+    </PanelCard>
   );
 };

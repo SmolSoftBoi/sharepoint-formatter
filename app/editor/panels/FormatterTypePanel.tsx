@@ -1,3 +1,7 @@
+"use client";
+
+import { makeStyles, Radio, RadioGroup, tokens } from "@fluentui/react-components";
+import { PanelCard } from "../components/PanelCard";
 import { FORMATTER_TYPES, FormatterTypeId } from "../../lib/formatters/types";
 
 interface FormatterTypePanelProps {
@@ -9,23 +13,27 @@ export const FormatterTypePanel = ({
   selectedId,
   onSelect,
 }: FormatterTypePanelProps) => {
+  const styles = useStyles();
+
   return (
-    <section>
-      <h2>Formatter Type</h2>
-      <ul>
+    <PanelCard title="Formatter Type">
+      <RadioGroup
+        value={selectedId}
+        onChange={(_event, data) => onSelect(data.value as FormatterTypeId)}
+        className={styles.group}
+      >
         {FORMATTER_TYPES.map((type) => (
-          <li key={type.id}>
-            <button
-              type="button"
-              onClick={() => onSelect(type.id)}
-              aria-pressed={type.id === selectedId}
-              aria-label={`Select formatter type ${type.name}`}
-            >
-              {type.name}
-            </button>
-          </li>
+          <Radio key={type.id} value={type.id} label={type.name} />
         ))}
-      </ul>
-    </section>
+      </RadioGroup>
+    </PanelCard>
   );
 };
+
+const useStyles = makeStyles({
+  group: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalXS,
+  },
+});

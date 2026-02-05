@@ -1,17 +1,46 @@
+"use client";
+
+import {
+  Caption1,
+  makeStyles,
+  tokens,
+} from "@fluentui/react-components";
+import { PanelCard } from "./PanelCard";
 import { EXPRESSION_EXAMPLES } from "../../lib/expressions/examples";
 
 export const ExpressionReference = () => {
+  const styles = useStyles();
+
   return (
-    <section>
-      <h2>Expression Examples</h2>
-      <ul>
+    <PanelCard title="Expression Examples">
+      <div className={styles.list}>
         {EXPRESSION_EXAMPLES.map((example) => (
-          <li key={example.expression}>
-            <code>{example.expression}</code>
-            <p>{example.description}</p>
-          </li>
+          <div key={example.expression} className={styles.item}>
+            <code className={styles.code}>{example.expression}</code>
+            <Caption1>{example.description}</Caption1>
+          </div>
         ))}
-      </ul>
-    </section>
+      </div>
+    </PanelCard>
   );
 };
+
+const useStyles = makeStyles({
+  list: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalS,
+  },
+  item: {
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalXXS,
+  },
+  code: {
+    fontFamily: tokens.fontFamilyMonospace,
+    backgroundColor: tokens.colorNeutralBackground3,
+    color: tokens.colorNeutralForeground1,
+    borderRadius: tokens.borderRadiusMedium,
+    padding: `${tokens.spacingVerticalXXS} ${tokens.spacingHorizontalS}`,
+  },
+});
