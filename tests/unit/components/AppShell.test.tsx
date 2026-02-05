@@ -1,4 +1,3 @@
-import React from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { AppShell } from "../../../app/components/AppShell";
 
@@ -23,8 +22,14 @@ const createMatchMedia = (matches: boolean): MatchMediaController => {
     removeListener: () => {},
     dispatch: (nextMatches: boolean) => {
       mql.matches = nextMatches;
-      const event = { matches: nextMatches } as MediaQueryListEvent;
-      listeners.forEach((listener) => listener(event));
+      const event = {
+        matches: nextMatches,
+        media: mql.media,
+        type: "change",
+      } as MediaQueryListEvent;
+      listeners.forEach((listener) => {
+        listener(event);
+      });
     },
     dispatchEvent: () => true,
   };
