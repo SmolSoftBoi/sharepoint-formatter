@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { AppShell } from "../../../app/components/AppShell";
 
 type MatchMediaController = MediaQueryList & {
@@ -70,7 +70,9 @@ describe("AppShell", () => {
       expect(document.documentElement.style.colorScheme).toBe("dark");
     });
 
-    media.dispatch(false);
+    act(() => {
+      media.dispatch(false);
+    });
 
     await waitFor(() => {
       expect(document.documentElement.style.colorScheme).toBe("light");
