@@ -11,11 +11,11 @@ describe("validator", () => {
 
   it.each(formatterTypeIds)('compiles schema for "%s"', (formatterTypeId) => {
     const result = validateFormatterJson(formatterTypeId, {});
-      const hasCompileError = result.errors.some(
-        (error) =>
-          error.hint === "Schema compilation failed. Check schema references." ||
-          error.message.includes("can't resolve reference"),
-      );
+    const hasCompileError = result.errors.some(
+      (error) =>
+        error.hint === "Schema compilation failed. Check schema references." ||
+        error.message.includes("can't resolve reference"),
+    );
 
     expect(hasCompileError).toBe(false);
   });
