@@ -7,3 +7,33 @@ script = '''
 yarn install
 yarn schemas:download
 '''
+
+[[actions]]
+name = "Dev"
+icon = "debug"
+command = "yarn dev"
+
+[[actions]]
+name = "Build"
+icon = "tool"
+command = "yarn build"
+
+[[actions]]
+name = "Start"
+icon = "run"
+command = "yarn start"
+
+[[actions]]
+name = "Lint"
+icon = "tool"
+command = "yarn lint"
+
+[[actions]]
+name = "Test"
+icon = "test"
+command = "yarn test"
+
+[[actions]]
+name = "Download Schemas"
+icon = "tool"
+command = "yarn download:schemas"
