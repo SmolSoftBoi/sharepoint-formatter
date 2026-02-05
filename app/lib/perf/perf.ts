@@ -1,4 +1,5 @@
 let measureSequence = 0;
+export const PERF_MEASURE_SEQUENCE_MODULO = 10_000;
 
 const isPerfEnabled = () => {
   // Avoid shipping instrumentation overhead in production builds.
@@ -15,7 +16,8 @@ export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
     return fn();
   }
 
-  const id = measureSequence++;
+  const id = measureSequence;
+  measureSequence = (measureSequence + 1) % PERF_MEASURE_SEQUENCE_MODULO;
   const startMark = `${name}:start:${id}`;
   const endMark = `${name}:end:${id}`;
 
@@ -29,4 +31,3 @@ export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
     performance.clearMarks(endMark);
   }
 };
-

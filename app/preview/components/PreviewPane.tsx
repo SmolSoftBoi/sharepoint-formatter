@@ -19,6 +19,18 @@ interface PreviewPaneProps {
   sampleData: Record<string, unknown>;
 }
 
+const normaliseSanitisedHtml = (value: unknown): string => {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (value instanceof Node) {
+    const container = document.createElement("div");
+    container.append(value.cloneNode(true));
+    return container.innerHTML;
+  }
+  return String(value ?? "");
+};
+
 export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
   const styles = useStyles();
   const { html, warnings } = useMemo(
@@ -35,7 +47,9 @@ export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
     if (!purifier) {
       return "";
     }
-    return withPerfMeasure("spfmt:preview:sanitize", () => purifier.sanitize(html) as string);
+    return withPerfMeasure("spfmt:preview:sanitize", () =>
+      normaliseSanitisedHtml(purifier.sanitize(html)),
+    );
   }, [html, purifier]);
 
   return (

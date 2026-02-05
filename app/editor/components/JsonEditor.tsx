@@ -47,8 +47,8 @@ export const JsonEditor = ({
   const onValidJsonRef = useRef(onValidJson);
   const onParseErrorRef = useRef(onParseError);
   const parseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const ignoreNextChangeEventRef = useRef(false);
   const lastProgrammaticValueRef = useRef<string>("");
+  const lastProgrammaticVersionRef = useRef<number | null>(null);
 
   const scheduleParse = useCallback((raw: string) => {
     if (parseTimerRef.current) {
@@ -81,9 +81,10 @@ export const JsonEditor = ({
     if (editorRef.current) {
       const editor = editorRef.current;
       if (!editor.hasTextFocus() && editor.getValue() !== nextText) {
-        ignoreNextChangeEventRef.current = true;
         lastProgrammaticValueRef.current = nextText;
         editor.setValue(nextText);
+        const versionId = editor.getModel()?.getAlternativeVersionId();
+        lastProgrammaticVersionRef.current = versionId ?? null;
       }
     } else {
       setFallbackText(nextText);
@@ -128,13 +129,24 @@ export const JsonEditor = ({
         automaticLayout: true,
       });
       editorInstance.onDidChangeModelContent(() => {
-        if (ignoreNextChangeEventRef.current) {
-          ignoreNextChangeEventRef.current = false;
-          if (editorInstance.getValue() === lastProgrammaticValueRef.current) {
-            return;
-          }
-        }
         const raw = editorInstance.getValue();
+        const versionId = editorInstance.getModel()?.getAlternativeVersionId() ?? null;
+        const programmaticVersionId = lastProgrammaticVersionRef.current;
+        const isProgrammaticChangeEvent =
+          programmaticVersionId !== null &&
+          versionId !== null &&
+          versionId <= programmaticVersionId &&
+          raw === lastProgrammaticValueRef.current;
+        if (isProgrammaticChangeEvent) {
+          return;
+        }
+        if (
+          programmaticVersionId !== null &&
+          (versionId === null || versionId > programmaticVersionId)
+        ) {
+          lastProgrammaticVersionRef.current = null;
+          lastProgrammaticValueRef.current = "";
+        }
         scheduleParse(raw);
       });
       editorRef.current = editorInstance;
