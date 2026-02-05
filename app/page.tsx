@@ -118,6 +118,7 @@ const useStyles = makeStyles({
   nav: {
     display: "flex",
     flexDirection: "column",
+    gap: tokens.spacingVerticalM,
     padding: [tokens.spacingVerticalM, tokens.spacingHorizontalL],
     backgroundColor: tokens.colorNeutralBackground4,
     borderRightStyle: "solid",
