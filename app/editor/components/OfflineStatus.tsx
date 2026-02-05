@@ -72,6 +72,6 @@ const useStyles = makeStyles({
     gap: tokens.spacingVerticalXS,
   },
   helper: {
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });

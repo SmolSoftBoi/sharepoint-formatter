@@ -1,6 +1,10 @@
 import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
-import { FormatterTypeId, FORMATTER_TYPES } from "../formatters/types";
+import {
+  FormatterTypeId,
+  FORMATTER_TYPE_BY_ID,
+  FORMATTER_TYPES,
+} from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
 import { withPerfMeasure } from "../perf/perf";
 
@@ -19,22 +23,95 @@ const ajv = new Ajv({ allErrors: true, strict: false, unicodeRegExp: false });
 const formatterValidatorCache = new Map<FormatterTypeId, ValidateFunction>();
 let schemasRegistered = false;
 
+const SHAREPOINT_SCHEMA_BASE_URL = "https://developer.microsoft.com/json-schemas/sp/v2";
+const COMMAND_BAR_SCHEMA_URL = `${SHAREPOINT_SCHEMA_BASE_URL}/command-bar-formatting.schema.json`;
+const COMMAND_BAR_SCHEMA_PLACEHOLDER: Record<string, unknown> = {
+  $schema: "http://json-schema.org/draft-04/schema#",
+  title: "CommandBarFormatter JSON",
+  description:
+    "Permissive placeholder schema for command bar customisation options (bundled schemas reference this URL).",
+  type: "object",
+  additionalProperties: true,
+};
+
+const getSchemaFileForFormatterType = (formatterTypeId: FormatterTypeId): string => {
+  const meta = FORMATTER_TYPE_BY_ID[formatterTypeId];
+  if (meta === undefined) {
+    throw new Error(`Unknown formatter type "${formatterTypeId}".`);
+  }
+  return meta.schemaFile;
+};
+
+// SharePoint hosts formatting schemas at URLs like:
+//   https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json
+// while our formatter metadata stores the base filename (e.g. "column-formatting.json").
+// This helper maps the local filename to the SharePoint schema URL by replacing the
+// trailing ".json" with ".schema.json" before appending it to the SharePoint base URL.
+const schemaUrlForFile = (schemaFile: string): string => {
+  return `${SHAREPOINT_SCHEMA_BASE_URL}/${schemaFile.replace(/\.json$/u, ".schema.json")}`;
+};
+
+const schemaUrlForFormatterType = (formatterTypeId: FormatterTypeId): string => {
+  return schemaUrlForFile(getSchemaFileForFormatterType(formatterTypeId));
+};
+
+const schemaRegistrationOrder: FormatterTypeId[] = (() => {
+  const priorityByFormatterTypeId: Partial<Record<FormatterTypeId, number>> = {
+    column: -100,
+    view: 100,
+  };
+
+  return FORMATTER_TYPES
+    .map((type, index) => ({
+      formatterTypeId: type.id,
+      priority: priorityByFormatterTypeId[type.id] ?? 0,
+      index,
+    }))
+    .sort((a, b) => a.priority - b.priority || a.index - b.index)
+    .map((entry) => entry.formatterTypeId);
+})();
+
 const registerSchemas = () => {
   if (schemasRegistered) {
     return;
   }
   withPerfMeasure("spfmt:validation:registerSchemas", () => {
-    FORMATTER_TYPES.forEach((type) => {
+    try {
+      if (!ajv.getSchema(COMMAND_BAR_SCHEMA_URL)) {
+        ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Schema registration failed.";
+      console.error(
+        `[schemas] Failed to register command-bar schema (${COMMAND_BAR_SCHEMA_URL}): ${message}`,
+      );
+    }
+
+    schemaRegistrationOrder.forEach((formatterTypeId) => {
+      let schemaUrl: string | undefined;
       try {
-        const schema = getSchemaForType(type.id);
-        ajv.addSchema(schema, type.id);
+        schemaUrl = schemaUrlForFormatterType(formatterTypeId);
+        if (ajv.getSchema(schemaUrl)) {
+          return;
+        }
+        const schema = getSchemaForType(formatterTypeId);
+        ajv.addSchema(schema, schemaUrl);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Schema registration failed.";
-        console.error(message);
+        const urlSuffix = schemaUrl ? ` (${schemaUrl})` : "";
+        console.error(
+          `[schemas] Failed to register schema for "${formatterTypeId}"${urlSuffix}: ${message}`,
+        );
       }
     });
   });
-  schemasRegistered = true;
+
+  const requiredSchemaUrls = [
+    COMMAND_BAR_SCHEMA_URL,
+    ...schemaRegistrationOrder.map(schemaUrlForFormatterType),
+  ];
+
+  schemasRegistered = requiredSchemaUrls.every((schemaUrl) => Boolean(ajv.getSchema(schemaUrl)));
 };
 
 const buildHint = (error: ErrorObject): string | undefined => {
@@ -89,14 +166,21 @@ export const validateFormatterJson = (
   let validate = formatterValidatorCache.get(formatterTypeId);
 
   if (!validate) {
+    let schemaUrl: string | undefined;
     try {
       registerSchemas();
-      const schema = getSchemaForType(formatterTypeId);
-      validate = withPerfMeasure(`spfmt:validation:compile:${formatterTypeId}`, () => ajv.compile(schema));
+      schemaUrl = schemaUrlForFormatterType(formatterTypeId);
+      validate = ajv.getSchema(schemaUrl);
+
+      if (!validate) {
+        const schema = getSchemaForType(formatterTypeId);
+        validate = withPerfMeasure(`spfmt:validation:compile:${formatterTypeId}`, () => ajv.compile(schema));
+      }
       formatterValidatorCache.set(formatterTypeId, validate);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema compilation failed.";
-      console.error(message);
+      const urlSuffix = schemaUrl ? ` (${schemaUrl})` : "";
+      console.error(`[schemas] Schema compilation failed for "${formatterTypeId}"${urlSuffix}: ${message}`);
       return {
         valid: false,
         errors: [
