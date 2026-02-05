@@ -96,6 +96,7 @@ export const ExportPanel = ({ formatterTypeId, json }: ExportPanelProps) => {
 const useStyles = makeStyles({
   actions: {
     display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(0, 1fr))",
     gap: tokens.spacingVerticalS,
   },
 });

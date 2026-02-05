@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  Body2,
   Button,
   ColorArea,
   ColorPicker,
@@ -11,6 +10,8 @@ import {
   Input,
   Label,
   makeStyles,
+  MessageBar,
+  MessageBarBody,
   Select,
   tokens,
 } from "@fluentui/react-components";
@@ -65,7 +66,11 @@ export const GuidedPatternPanel = ({
   return (
     <PanelCard title="Guided Patterns">
       {patterns.length === 0 ? (
-        <Body2>No guided patterns available for this formatter type.</Body2>
+        <MessageBar>
+          <MessageBarBody>
+            No guided patterns available for this formatter type.
+          </MessageBarBody>
+        </MessageBar>
       ) : (
         <Field label="Pattern">
           <Select

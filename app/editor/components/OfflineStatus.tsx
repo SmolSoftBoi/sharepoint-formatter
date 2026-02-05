@@ -8,8 +8,8 @@ import {
   tokens,
 } from "@fluentui/react-components";
 import {
-  PlugConnected24Regular,
-  PlugDisconnected24Regular,
+  PlugConnectedRegular,
+  PlugDisconnectedRegular,
 } from "@fluentui/react-icons";
 import { PanelCard } from "./PanelCard";
 import {
@@ -35,14 +35,14 @@ export const OfflineStatus = () => {
       return {
         label: "Online",
         color: "success" as const,
-        icon: <PlugConnected24Regular />,
+        icon: <PlugConnectedRegular />,
         helper: "Offline cache is ready.",
       };
     }
     return {
       label: "Offline",
       color: "danger" as const,
-      icon: <PlugDisconnected24Regular />,
+      icon: <PlugDisconnectedRegular />,
       helper: "Working from local cache only.",
     };
   }, [isOnline]);
@@ -57,14 +57,12 @@ export const OfflineStatus = () => {
   }, []);
 
   return (
-    <PanelCard title="Connectivity">
-      <div className={styles.status} role="status" aria-live="polite">
-        <Badge color={status.color} icon={status.icon} appearance="tint">
-          {status.label}
-        </Badge>
-        <Body2>{status.helper}</Body2>
-      </div>
-    </PanelCard>
+    <div className={styles.status} role="status" aria-live="polite">
+      <Badge color={status.color} icon={status.icon} appearance="tint">
+        {status.label}
+      </Badge>
+      <Body2 className={styles.helper}>{status.helper}</Body2>
+    </div>
   );
 };
 
@@ -74,4 +72,7 @@ const useStyles = makeStyles({
     flexDirection: "column",
     gap: tokens.spacingVerticalXS,
   },
+  helper: {
+    textAlign: "center"
+  }
 });

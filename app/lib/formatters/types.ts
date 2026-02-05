@@ -9,6 +9,7 @@ export type FormatterTypeId =
 export interface FormatterType {
   id: FormatterTypeId;
   name: string;
+  description?: string;
   schemaFile: string;
   containerKey: string;
 }

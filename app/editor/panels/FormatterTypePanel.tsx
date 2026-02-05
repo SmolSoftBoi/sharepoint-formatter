@@ -1,6 +1,6 @@
 "use client";
 
-import { makeStyles, Radio, RadioGroup, tokens } from "@fluentui/react-components";
+import { Caption1, makeStyles, Radio, RadioGroup, tokens } from "@fluentui/react-components";
 import { PanelCard } from "../components/PanelCard";
 import { FORMATTER_TYPES, FormatterTypeId } from "../../lib/formatters/types";
 
@@ -23,7 +23,11 @@ export const FormatterTypePanel = ({
         className={styles.group}
       >
         {FORMATTER_TYPES.map((type) => (
-          <Radio key={type.id} value={type.id} label={type.name} />
+          <Radio key={type.id} value={type.id} label={
+            <>
+              {type.name}<br/>
+              {type.description && <Caption1>{type.description}</Caption1>}
+            </>} />
         ))}
       </RadioGroup>
     </PanelCard>

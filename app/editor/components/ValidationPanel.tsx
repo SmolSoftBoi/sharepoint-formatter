@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Body2,
+  Body1,
   Caption1,
   MessageBar,
   MessageBarBody,
@@ -23,7 +23,9 @@ export const ValidationPanel = ({ parseError, errors }: ValidationPanelProps) =>
   if (!parseError && errors.length === 0) {
     return (
       <PanelCard title="Validation">
-        <Body2>No validation errors.</Body2>
+        <MessageBar>
+          <MessageBarBody>No validation errors.</MessageBarBody>
+        </MessageBar>
       </PanelCard>
     );
   }
@@ -33,8 +35,10 @@ export const ValidationPanel = ({ parseError, errors }: ValidationPanelProps) =>
       {parseError && (
         <MessageBar intent="error">
           <MessageBarBody>
-            <MessageBarTitle>JSON parse error</MessageBarTitle>
-            {parseError}
+            <MessageBarBody>
+              <MessageBarTitle>JSON parse error</MessageBarTitle>
+              {parseError}
+            </MessageBarBody>
           </MessageBarBody>
         </MessageBar>
       )}
@@ -42,15 +46,22 @@ export const ValidationPanel = ({ parseError, errors }: ValidationPanelProps) =>
         <ul className={styles.list} role="alert">
           {errors.map((error, index) => (
             <li key={`${error.message}-${index}`} className={styles.item}>
-              <Body2>
-                {error.message}
-                {error.path ? ` (${error.path})` : ""}
-              </Body2>
-              {error.hint ? (
-                <Caption1>
-                  <span className={styles.hintLabel}>Hint:</span> {error.hint}
-                </Caption1>
-              ) : null}
+              <MessageBar intent="warning">
+                <MessageBarBody>
+                  <MessageBarTitle>
+                    {error.message}
+                  </MessageBarTitle>
+                  {error.path ? ` (${error.path})` : ""}
+                  {error.hint ? (
+                    <>
+                      <br />
+                      <Caption1>
+                        <span className={styles.hintLabel}>Hint:</span> {error.hint}
+                      </Caption1>
+                    </>
+                  ) : null}
+                </MessageBarBody>
+              </MessageBar>
             </li>
           ))}
         </ul>

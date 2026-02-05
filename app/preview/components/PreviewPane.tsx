@@ -3,6 +3,7 @@
 import createDOMPurify from "dompurify";
 import { useMemo } from "react";
 import {
+  CardPreview,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
@@ -42,11 +43,13 @@ export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
           </MessageBarBody>
         </MessageBar>
       )}
-      <div
-        className={styles.preview}
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: safeHtml }}
-      />
+      <CardPreview>
+        <div
+          className={styles.preview}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: safeHtml }}
+        />
+      </CardPreview>
     </PanelCard>
   );
 };
