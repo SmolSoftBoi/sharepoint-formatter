@@ -16,6 +16,7 @@
     "schemas:download": "node scripts/download-sharepoint-schemas.mjs"
   },
   "dependencies": {
+    "@ctrl/tinycolor": "^4.2.0",
     "@fluentui/react-components": "^9.72.11",
     "@fluentui/react-icons": "^2.0.318",
     "ajv": "^8.12.0",

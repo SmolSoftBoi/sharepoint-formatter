@@ -34,7 +34,7 @@ export const SampleDataPanel = ({
         setParseError("Sample data must be a JSON object.");
       }
     } catch {
-      setParseError("Invalid JSON");
+      setParseError("Invalid sample JSON.");
     }
   };
 
@@ -42,11 +42,7 @@ export const SampleDataPanel = ({
     <PanelCard title="Sample Data">
       <Field
         label="Sample data JSON"
-        validationMessage={
-          parseError
-            ? (parseError === "Invalid JSON" ? "Invalid sample JSON." : parseError)
-            : undefined
-        }
+        validationMessage={parseError ?? undefined}
         validationState={parseError ? "error" : "none"}
       >
         <Textarea

@@ -40,6 +40,11 @@ Create, validate, preview, and export SharePoint list formatting JSON. Offline-c
 
 The app uses local storage for drafts and a lightweight cache bootstrap. After the initial load, core editor, validation, and preview flows should work offline.
 
+Schema downloads can be skipped when you are offline or in restricted CI environments by setting `SCHEMAS_OFFLINE`:
+
+- `SCHEMAS_OFFLINE=true yarn schemas:download`
+- `SCHEMAS_OFFLINE=1 yarn test`
+
 ## Tests
 
 - Unit tests for validation, schema loading, expressions, templates, export
