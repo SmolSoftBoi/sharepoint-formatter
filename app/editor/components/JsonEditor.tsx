@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { editor as MonacoEditor } from "monaco-editor";
 import {
   Field,
@@ -10,6 +10,7 @@ import {
 } from "@fluentui/react-components";
 import { PanelCard } from "./PanelCard";
 import { sanitizeJsonString } from "../../lib/validation/sanitizeJson";
+import { withPerfMeasure } from "../../lib/perf/perf";
 
 type MonacoGlobal = typeof globalThis & {
   MonacoEnvironment?: {
@@ -28,6 +29,8 @@ const normalizeStringify = (input: unknown): string => {
   return typeof serialized === "string" ? serialized : "";
 };
 
+const DEFAULT_DEBOUNCE_MS = 170;
+
 export const JsonEditor = ({
   value,
   onValidJson,
@@ -43,6 +46,26 @@ export const JsonEditor = ({
   );
   const onValidJsonRef = useRef(onValidJson);
   const onParseErrorRef = useRef(onParseError);
+  const parseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ignoreNextChangeEventRef = useRef(false);
+  const lastProgrammaticValueRef = useRef<string>("");
+
+  const scheduleParse = useCallback((raw: string) => {
+    if (parseTimerRef.current) {
+      clearTimeout(parseTimerRef.current);
+    }
+
+    parseTimerRef.current = setTimeout(() => {
+      parseTimerRef.current = null;
+      const result = withPerfMeasure("spfmt:json:parse", () => sanitizeJsonString(raw));
+      if (result.ok) {
+        onParseErrorRef.current(undefined);
+        onValidJsonRef.current(result.value);
+      } else {
+        onParseErrorRef.current(result.error);
+      }
+    }, DEFAULT_DEBOUNCE_MS);
+  }, []);
 
   useEffect(() => {
     onValidJsonRef.current = onValidJson;
@@ -58,6 +81,8 @@ export const JsonEditor = ({
     if (editorRef.current) {
       const editor = editorRef.current;
       if (!editor.hasTextFocus() && editor.getValue() !== nextText) {
+        ignoreNextChangeEventRef.current = true;
+        lastProgrammaticValueRef.current = nextText;
         editor.setValue(nextText);
       }
     } else {
@@ -103,14 +128,14 @@ export const JsonEditor = ({
         automaticLayout: true,
       });
       editorInstance.onDidChangeModelContent(() => {
-        const raw = editorInstance.getValue();
-        const result = sanitizeJsonString(raw);
-        if (result.ok) {
-          onParseErrorRef.current(undefined);
-          onValidJsonRef.current(result.value);
-        } else {
-          onParseErrorRef.current(result.error);
+        if (ignoreNextChangeEventRef.current) {
+          ignoreNextChangeEventRef.current = false;
+          if (editorInstance.getValue() === lastProgrammaticValueRef.current) {
+            return;
+          }
         }
+        const raw = editorInstance.getValue();
+        scheduleParse(raw);
       });
       editorRef.current = editorInstance;
       setIsReady(true);
@@ -120,19 +145,17 @@ export const JsonEditor = ({
 
     return () => {
       disposed = true;
+      if (parseTimerRef.current) {
+        clearTimeout(parseTimerRef.current);
+        parseTimerRef.current = null;
+      }
       editorRef.current?.dispose();
     };
-  }, []);
+  }, [scheduleParse]);
 
   const handleFallbackChange = (raw: string) => {
     setFallbackText(raw);
-    const result = sanitizeJsonString(raw);
-    if (result.ok) {
-      onParseError(undefined);
-      onValidJson(result.value);
-    } else {
-      onParseError(result.error);
-    }
+    scheduleParse(raw);
   };
 
   return (

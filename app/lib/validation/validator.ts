@@ -2,6 +2,7 @@ import Ajv from "ajv-draft-04";
 import { ErrorObject, ValidateFunction } from "ajv";
 import { FormatterTypeId, FORMATTER_TYPES } from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
+import { withPerfMeasure } from "../perf/perf";
 
 export interface ValidationError {
   message: string;
@@ -22,14 +23,16 @@ const registerSchemas = () => {
   if (schemasRegistered) {
     return;
   }
-  FORMATTER_TYPES.forEach((type) => {
-    try {
-      const schema = getSchemaForType(type.id);
-      ajv.addSchema(schema, type.id);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Schema registration failed.";
-      console.error(message);
-    }
+  withPerfMeasure("spfmt:validation:registerSchemas", () => {
+    FORMATTER_TYPES.forEach((type) => {
+      try {
+        const schema = getSchemaForType(type.id);
+        ajv.addSchema(schema, type.id);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Schema registration failed.";
+        console.error(message);
+      }
+    });
   });
   schemasRegistered = true;
 };
@@ -89,7 +92,7 @@ export const validateFormatterJson = (
     try {
       registerSchemas();
       const schema = getSchemaForType(formatterTypeId);
-      validate = ajv.compile(schema);
+      validate = withPerfMeasure(`spfmt:validation:compile:${formatterTypeId}`, () => ajv.compile(schema));
       formatterValidatorCache.set(formatterTypeId, validate);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema compilation failed.";
@@ -105,7 +108,7 @@ export const validateFormatterJson = (
       };
     }
   }
-  const valid = validate(json);
+  const valid = withPerfMeasure("spfmt:validation:validate", () => validate(json));
 
   return {
     valid: Boolean(valid),

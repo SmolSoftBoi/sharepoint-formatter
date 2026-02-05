@@ -11,7 +11,6 @@ import {
   PlugConnectedRegular,
   PlugDisconnectedRegular,
 } from "@fluentui/react-icons";
-import { PanelCard } from "./PanelCard";
 import {
   initOfflineCache,
   subscribeOfflineStatus,
