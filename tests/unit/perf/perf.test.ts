@@ -149,4 +149,24 @@ describe("withPerfMeasure", () => {
     expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(1, "spfmt:rollover");
     expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(2, "spfmt:rollover");
   });
+
+  it("clears each seen measure name when the sequence rolls over", async () => {
+    process.env.NODE_ENV = "test";
+    const performanceMock = installPerformanceMock();
+
+    const { PERF_MEASURE_SEQUENCE_MODULO, withPerfMeasure } = await import("../../../app/lib/perf/perf");
+
+    withPerfMeasure("spfmt:rare", () => 1);
+    withPerfMeasure("spfmt:hot", () => 2);
+
+    for (let index = 0; index < PERF_MEASURE_SEQUENCE_MODULO - 2; index += 1) {
+      withPerfMeasure("spfmt:hot", () => index);
+    }
+    withPerfMeasure("spfmt:hot", () => 3);
+
+    expect(performanceMock.clearMeasures).toHaveBeenCalledTimes(3);
+    expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(1, "spfmt:rare");
+    expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(2, "spfmt:rare");
+    expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(3, "spfmt:hot");
+  });
 });

@@ -1,5 +1,6 @@
 let measureSequence = 0;
 export const PERF_MEASURE_SEQUENCE_MODULO = 10_000;
+const seenMeasureNames = new Set<string>();
 
 type PerfApi = Pick<Performance, "mark" | "measure" | "clearMarks" | "clearMeasures">;
 
@@ -32,6 +33,7 @@ export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
     return fn();
   }
 
+  seenMeasureNames.add(name);
   const id = measureSequence;
   // Keep the sequence bounded in long-lived sessions and intentionally reset at rollover.
   measureSequence = (measureSequence + 1) % PERF_MEASURE_SEQUENCE_MODULO;
@@ -39,7 +41,9 @@ export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
   const endMark = `${name}:end:${id}`;
 
   if (id === 0) {
-    perf.clearMeasures(name);
+    seenMeasureNames.forEach((measureName) => {
+      perf.clearMeasures(measureName);
+    });
   }
 
   perf.mark(startMark);
