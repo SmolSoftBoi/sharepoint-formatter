@@ -6,6 +6,7 @@ import {
   FORMATTER_TYPES,
 } from "../formatters/types";
 import { getSchemaForType } from "./schemaLoader";
+import { withPerfMeasure } from "../perf/perf";
 
 export interface ValidationError {
   message: string;
@@ -74,34 +75,35 @@ const registerSchemas = () => {
   if (schemasRegistered) {
     return;
   }
-
-  try {
-    if (!ajv.getSchema(COMMAND_BAR_SCHEMA_URL)) {
-      ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Schema registration failed.";
-    console.error(
-      `[schemas] Failed to register command-bar schema (${COMMAND_BAR_SCHEMA_URL}): ${message}`,
-    );
-  }
-
-  schemaRegistrationOrder.forEach((formatterTypeId) => {
-    let schemaUrl: string | undefined;
+  withPerfMeasure("spfmt:validation:registerSchemas", () => {
     try {
-      schemaUrl = schemaUrlForFormatterType(formatterTypeId);
-      if (ajv.getSchema(schemaUrl)) {
-        return;
+      if (!ajv.getSchema(COMMAND_BAR_SCHEMA_URL)) {
+        ajv.addSchema(COMMAND_BAR_SCHEMA_PLACEHOLDER, COMMAND_BAR_SCHEMA_URL);
       }
-      const schema = getSchemaForType(formatterTypeId);
-      ajv.addSchema(schema, schemaUrl);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Schema registration failed.";
-      const urlSuffix = schemaUrl ? ` (${schemaUrl})` : "";
       console.error(
-        `[schemas] Failed to register schema for "${formatterTypeId}"${urlSuffix}: ${message}`,
+        `[schemas] Failed to register command-bar schema (${COMMAND_BAR_SCHEMA_URL}): ${message}`,
       );
     }
+
+    schemaRegistrationOrder.forEach((formatterTypeId) => {
+      let schemaUrl: string | undefined;
+      try {
+        schemaUrl = schemaUrlForFormatterType(formatterTypeId);
+        if (ajv.getSchema(schemaUrl)) {
+          return;
+        }
+        const schema = getSchemaForType(formatterTypeId);
+        ajv.addSchema(schema, schemaUrl);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Schema registration failed.";
+        const urlSuffix = schemaUrl ? ` (${schemaUrl})` : "";
+        console.error(
+          `[schemas] Failed to register schema for "${formatterTypeId}"${urlSuffix}: ${message}`,
+        );
+      }
+    });
   });
 
   const requiredSchemaUrls = [
@@ -172,7 +174,7 @@ export const validateFormatterJson = (
 
       if (!validate) {
         const schema = getSchemaForType(formatterTypeId);
-        validate = ajv.compile(schema);
+        validate = withPerfMeasure(`spfmt:validation:compile:${formatterTypeId}`, () => ajv.compile(schema));
       }
       formatterValidatorCache.set(formatterTypeId, validate);
     } catch (error) {
@@ -190,7 +192,7 @@ export const validateFormatterJson = (
       };
     }
   }
-  const valid = validate(json);
+  const valid = withPerfMeasure("spfmt:validation:validate", () => validate(json));
 
   return {
     valid: Boolean(valid),

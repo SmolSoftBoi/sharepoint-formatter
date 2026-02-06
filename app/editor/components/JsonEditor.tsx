@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { editor as MonacoEditor } from "monaco-editor";
 import {
   Field,
@@ -10,6 +10,11 @@ import {
 } from "@fluentui/react-components";
 import { PanelCard } from "./PanelCard";
 import { sanitizeJsonString } from "../../lib/validation/sanitizeJson";
+import { withPerfMeasure } from "../../lib/perf/perf";
+import {
+  createDebouncedTask,
+  type DebouncedTask,
+} from "../utils/createDebouncedTask";
 
 type MonacoGlobal = typeof globalThis & {
   MonacoEnvironment?: {
@@ -28,6 +33,9 @@ const normalizeStringify = (input: unknown): string => {
   return typeof serialized === "string" ? serialized : "";
 };
 
+// 170ms avoids extra parse churn on short typing pauses while staying responsive.
+const DEFAULT_DEBOUNCE_MS = 170;
+
 export const JsonEditor = ({
   value,
   onValidJson,
@@ -43,6 +51,12 @@ export const JsonEditor = ({
   );
   const onValidJsonRef = useRef(onValidJson);
   const onParseErrorRef = useRef(onParseError);
+  const parseTaskRef = useRef<DebouncedTask<string> | null>(null);
+  const pendingProgrammaticValueRef = useRef<string | null>(null);
+
+  const scheduleParse = useCallback((raw: string) => {
+    parseTaskRef.current?.schedule(raw);
+  }, []);
 
   useEffect(() => {
     onValidJsonRef.current = onValidJson;
@@ -58,6 +72,7 @@ export const JsonEditor = ({
     if (editorRef.current) {
       const editor = editorRef.current;
       if (!editor.hasTextFocus() && editor.getValue() !== nextText) {
+        pendingProgrammaticValueRef.current = nextText;
         editor.setValue(nextText);
       }
     } else {
@@ -67,6 +82,20 @@ export const JsonEditor = ({
 
   useEffect(() => {
     let disposed = false;
+    parseTaskRef.current = createDebouncedTask<string>({
+      delayMs: DEFAULT_DEBOUNCE_MS,
+      onRun: (raw) => {
+        const result = withPerfMeasure("spfmt:json:parse", () =>
+          sanitizeJsonString(raw),
+        );
+        if (result.ok) {
+          onParseErrorRef.current(undefined);
+          onValidJsonRef.current(result.value);
+        } else {
+          onParseErrorRef.current(result.error);
+        }
+      },
+    });
 
     const setupEditor = async () => {
       if (!containerRef.current) {
@@ -104,13 +133,20 @@ export const JsonEditor = ({
       });
       editorInstance.onDidChangeModelContent(() => {
         const raw = editorInstance.getValue();
-        const result = sanitizeJsonString(raw);
-        if (result.ok) {
-          onParseErrorRef.current(undefined);
-          onValidJsonRef.current(result.value);
-        } else {
-          onParseErrorRef.current(result.error);
+        const pendingProgrammaticValue = pendingProgrammaticValueRef.current;
+        if (
+          pendingProgrammaticValue !== null &&
+          raw === pendingProgrammaticValue
+        ) {
+          // `setValue()` emits `onDidChangeModelContent` synchronously; skip those
+          // flush events (and any duplicate same-value follow-up events) so we only
+          // parse user-driven changes.
+          return;
         }
+        if (pendingProgrammaticValue !== null) {
+          pendingProgrammaticValueRef.current = null;
+        }
+        scheduleParse(raw);
       });
       editorRef.current = editorInstance;
       setIsReady(true);
@@ -120,19 +156,15 @@ export const JsonEditor = ({
 
     return () => {
       disposed = true;
+      parseTaskRef.current?.dispose();
+      parseTaskRef.current = null;
       editorRef.current?.dispose();
     };
-  }, []);
+  }, [scheduleParse]);
 
   const handleFallbackChange = (raw: string) => {
     setFallbackText(raw);
-    const result = sanitizeJsonString(raw);
-    if (result.ok) {
-      onParseError(undefined);
-      onValidJson(result.value);
-    } else {
-      onParseError(result.error);
-    }
+    scheduleParse(raw);
   };
 
   return (

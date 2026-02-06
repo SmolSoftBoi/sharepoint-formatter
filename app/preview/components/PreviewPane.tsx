@@ -12,22 +12,45 @@ import {
 } from "@fluentui/react-components";
 import { PanelCard } from "../../editor/components/PanelCard";
 import { renderPreview } from "../renderer/render";
+import { withPerfMeasure } from "../../lib/perf/perf";
 
 interface PreviewPaneProps {
   json: unknown;
   sampleData: Record<string, unknown>;
 }
 
+const normaliseSanitisedHtml = (value: unknown): string => {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (value instanceof Node) {
+    const container = document.createElement("div");
+    container.append(value.cloneNode(true));
+    return container.innerHTML;
+  }
+  return String(value ?? "");
+};
+
 export const PreviewPane = ({ json, sampleData }: PreviewPaneProps) => {
   const styles = useStyles();
-  const { html, warnings } = renderPreview(json, sampleData);
+  const { html, warnings } = useMemo(
+    () => withPerfMeasure("spfmt:preview:render", () => renderPreview(json, sampleData)),
+    [json, sampleData],
+  );
   const purifier = useMemo(() => {
     if (typeof window === "undefined") {
       return null;
     }
     return createDOMPurify(window);
   }, []);
-  const safeHtml = purifier ? purifier.sanitize(html) : "";
+  const safeHtml = useMemo(() => {
+    if (!purifier) {
+      return "";
+    }
+    return withPerfMeasure("spfmt:preview:sanitize", () =>
+      normaliseSanitisedHtml(purifier.sanitize(html)),
+    );
+  }, [html, purifier]);
 
   return (
     <PanelCard title="Preview">
