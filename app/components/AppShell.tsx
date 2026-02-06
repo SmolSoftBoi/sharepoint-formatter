@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import {
   FluentProvider,
+  type GriffelStyle,
   makeStyles,
   Subtitle1,
   Title1,
@@ -12,7 +13,9 @@ import {
   webLightTheme,
 } from "@fluentui/react-components";
 
-const useStyles = makeStyles({
+type AppShellStyleSlots = "shell" | "header" | "headerContent" | "main";
+
+export const appShellStyleConfig: Record<AppShellStyleSlots, GriffelStyle> = {
   shell: {
     minHeight: "100vh",
     maxHeight: "100vh",
@@ -35,10 +38,13 @@ const useStyles = makeStyles({
   },
   main: {
     flex: 1,
-    minHeight: "100%",
-    maxHeight: "100%"
+    display: "flex",
+    minHeight: 0,
+    overflow: "hidden",
   },
-});
+};
+
+const useStyles = makeStyles(appShellStyleConfig);
 
 type ColorScheme = "light" | "dark";
 

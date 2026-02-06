@@ -1,5 +1,5 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
-import { AppShell } from "../../../app/components/AppShell";
+import { AppShell, appShellStyleConfig } from "../../../app/components/AppShell";
 
 type MatchMediaController = MediaQueryList & {
   dispatch: (nextMatches: boolean) => void;
@@ -82,5 +82,15 @@ describe("AppShell", () => {
     await waitFor(() => {
       expect(document.documentElement.style.colorScheme).toBe("light");
     });
+  });
+
+  it("uses a bounded main container to support pane-level scrolling", () => {
+    expect(appShellStyleConfig.main).toEqual(
+      expect.objectContaining({
+        display: "flex",
+        minHeight: 0,
+        overflow: "hidden",
+      }),
+    );
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { makeStyles, tokens } from "@fluentui/react-components";
+import { makeStyles } from "@fluentui/react-components";
 import { FormatterTypePanel } from "./editor/panels/FormatterTypePanel";
 import { TemplatePanel } from "./editor/panels/TemplatePanel";
 import { SampleDataPanel } from "./editor/panels/SampleDataPanel";
@@ -23,6 +23,7 @@ import {
   setTemplateId,
   useEditorState,
 } from "./editor/state/editorStore";
+import { homePageStyleConfig } from "./editor/layoutStyles";
 
 /**
  * Render the editor page UI that wires the centralized editor state to all panels and the live JSON preview.
@@ -57,7 +58,7 @@ export default function HomePage() {
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.nav}>
+      <aside className={styles.nav} data-testid="editor-nav">
         <FormatterTypePanel
           selectedId={editorState.formatterTypeId}
           onSelect={setFormatterType}
@@ -82,7 +83,7 @@ export default function HomePage() {
         <SaveDraftButton />
         <OfflineStatus />
       </aside>
-      <section className={styles.preview}>
+      <section className={styles.preview} data-testid="editor-preview">
         <JsonEditor
           value={editorState.json}
           onValidJson={setJson}
@@ -102,36 +103,4 @@ export default function HomePage() {
   );
 }
 
-const useStyles = makeStyles({
-  layout: {
-    display: "grid",
-    gridTemplateColumns: "minmax(0, 320px) minmax(0, 1fr)",
-    gap: 0,
-    alignItems: "stretch",
-    "@media (max-width: 960px)": {
-      gridTemplateColumns: "minmax(0, 1fr)",
-      gap: tokens.spacingVerticalL,
-    },
-    minHeight: "100%",
-    maxHeight: "100%"
-  },
-  nav: {
-    display: "flex",
-    flexDirection: "column",
-    gap: tokens.spacingVerticalM,
-    padding: [tokens.spacingVerticalM, tokens.spacingHorizontalL],
-    backgroundColor: tokens.colorNeutralBackground4,
-    borderRightStyle: "solid",
-    borderRightWidth: tokens.strokeWidthThin,
-    borderRightColor: tokens.colorNeutralStroke4,
-    overflowY: "auto"
-  },
-  preview: {
-    display: "flex",
-    flexDirection: "column",
-    gap: tokens.spacingVerticalM,
-    padding: [tokens.spacingVerticalM, tokens.spacingHorizontalL],
-    backgroundColor: tokens.colorNeutralBackground2,
-    overflowY: "auto"
-  },
-});
+const useStyles = makeStyles(homePageStyleConfig);
