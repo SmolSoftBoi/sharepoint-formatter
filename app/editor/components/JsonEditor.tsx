@@ -47,8 +47,7 @@ export const JsonEditor = ({
   const onValidJsonRef = useRef(onValidJson);
   const onParseErrorRef = useRef(onParseError);
   const parseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastProgrammaticValueRef = useRef<string>("");
-  const lastProgrammaticVersionRef = useRef<number | null>(null);
+  const pendingProgrammaticValueRef = useRef<string | null>(null);
 
   const scheduleParse = useCallback((raw: string) => {
     if (parseTimerRef.current) {
@@ -81,10 +80,8 @@ export const JsonEditor = ({
     if (editorRef.current) {
       const editor = editorRef.current;
       if (!editor.hasTextFocus() && editor.getValue() !== nextText) {
-        lastProgrammaticValueRef.current = nextText;
+        pendingProgrammaticValueRef.current = nextText;
         editor.setValue(nextText);
-        const versionId = editor.getModel()?.getAlternativeVersionId();
-        lastProgrammaticVersionRef.current = versionId ?? null;
       }
     } else {
       setFallbackText(nextText);
@@ -130,22 +127,18 @@ export const JsonEditor = ({
       });
       editorInstance.onDidChangeModelContent(() => {
         const raw = editorInstance.getValue();
-        const versionId = editorInstance.getModel()?.getAlternativeVersionId() ?? null;
-        const programmaticVersionId = lastProgrammaticVersionRef.current;
-        const isProgrammaticChangeEvent =
-          programmaticVersionId !== null &&
-          versionId !== null &&
-          versionId <= programmaticVersionId &&
-          raw === lastProgrammaticValueRef.current;
-        if (isProgrammaticChangeEvent) {
+        const pendingProgrammaticValue = pendingProgrammaticValueRef.current;
+        if (
+          pendingProgrammaticValue !== null &&
+          raw === pendingProgrammaticValue
+        ) {
+          // `setValue()` emits `onDidChangeModelContent` synchronously; skip those
+          // flush events (and any duplicate same-value follow-up events) so we only
+          // parse user-driven changes.
           return;
         }
-        if (
-          programmaticVersionId !== null &&
-          (versionId === null || versionId > programmaticVersionId)
-        ) {
-          lastProgrammaticVersionRef.current = null;
-          lastProgrammaticValueRef.current = "";
+        if (pendingProgrammaticValue !== null) {
+          pendingProgrammaticValueRef.current = null;
         }
         scheduleParse(raw);
       });

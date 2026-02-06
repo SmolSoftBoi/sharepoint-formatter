@@ -6,6 +6,7 @@ describe("withPerfMeasure", () => {
     mark: jest.Mock<void, [string]>;
     measure: jest.Mock<void, [string, string, string]>;
     clearMarks: jest.Mock<void, [string]>;
+    clearMeasures: jest.Mock<void, [string]>;
   }
 
   const installPerformanceMock = (): PerformanceMock => {
@@ -13,6 +14,7 @@ describe("withPerfMeasure", () => {
       mark: jest.fn(),
       measure: jest.fn(),
       clearMarks: jest.fn(),
+      clearMeasures: jest.fn(),
     };
 
     Object.defineProperty(globalThis, "performance", {
@@ -50,6 +52,7 @@ describe("withPerfMeasure", () => {
       "spfmt:test:start:0",
       "spfmt:test:end:0",
     );
+    expect(performanceMock.clearMeasures).toHaveBeenCalledWith("spfmt:test");
     expect(performanceMock.clearMarks).toHaveBeenCalledWith("spfmt:test:start:0");
     expect(performanceMock.clearMarks).toHaveBeenCalledWith("spfmt:test:end:0");
   });
@@ -64,6 +67,29 @@ describe("withPerfMeasure", () => {
     expect(result).toBe(42);
     expect(performanceMock.mark).not.toHaveBeenCalled();
     expect(performanceMock.measure).not.toHaveBeenCalled();
+    expect(performanceMock.clearMeasures).not.toHaveBeenCalled();
+  });
+
+  it("skips instrumentation when required performance APIs are missing", async () => {
+    process.env.NODE_ENV = "test";
+    const incompletePerformanceMock = {
+      mark: jest.fn(),
+      measure: jest.fn(),
+      clearMarks: jest.fn(),
+    };
+    Object.defineProperty(globalThis, "performance", {
+      configurable: true,
+      writable: true,
+      value: incompletePerformanceMock as unknown as Performance,
+    });
+
+    const { withPerfMeasure } = await import("../../../app/lib/perf/perf");
+    const result = withPerfMeasure("spfmt:test", () => "ok");
+
+    expect(result).toBe("ok");
+    expect(incompletePerformanceMock.mark).not.toHaveBeenCalled();
+    expect(incompletePerformanceMock.measure).not.toHaveBeenCalled();
+    expect(incompletePerformanceMock.clearMarks).not.toHaveBeenCalled();
   });
 
   it("still measures when the wrapped callback throws", async () => {
@@ -83,6 +109,7 @@ describe("withPerfMeasure", () => {
       "spfmt:test:start:0",
       "spfmt:test:end:0",
     );
+    expect(performanceMock.clearMeasures).toHaveBeenCalledWith("spfmt:test");
     expect(performanceMock.clearMarks).toHaveBeenCalledWith("spfmt:test:start:0");
     expect(performanceMock.clearMarks).toHaveBeenCalledWith("spfmt:test:end:0");
   });
@@ -104,5 +131,8 @@ describe("withPerfMeasure", () => {
     expect(startMarkNames[0]).toBe("spfmt:rollover:start:0");
     expect(startMarkNames[PERF_MEASURE_SEQUENCE_MODULO]).toBe("spfmt:rollover:start:0");
     expect(startMarkNames[PERF_MEASURE_SEQUENCE_MODULO + 1]).toBe("spfmt:rollover:start:1");
+    expect(performanceMock.clearMeasures).toHaveBeenCalledTimes(2);
+    expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(1, "spfmt:rollover");
+    expect(performanceMock.clearMeasures).toHaveBeenNthCalledWith(2, "spfmt:rollover");
   });
 });

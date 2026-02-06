@@ -1,18 +1,34 @@
 let measureSequence = 0;
 export const PERF_MEASURE_SEQUENCE_MODULO = 10_000;
 
-const isPerfEnabled = () => {
-  // Avoid shipping instrumentation overhead in production builds.
-  return (
-    process.env.NODE_ENV !== "production" &&
-    typeof performance !== "undefined" &&
-    typeof performance.mark === "function" &&
-    typeof performance.measure === "function"
-  );
+type PerfApi = Pick<Performance, "mark" | "measure" | "clearMarks" | "clearMeasures">;
+
+const getPerfApi = (): PerfApi | null => {
+  // Restrict instrumentation to browser-like runtimes and non-production builds.
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return null;
+  }
+
+  const perf = globalThis.performance;
+  if (
+    perf === undefined ||
+    typeof perf.mark !== "function" ||
+    typeof perf.measure !== "function" ||
+    typeof perf.clearMarks !== "function" ||
+    typeof perf.clearMeasures !== "function"
+  ) {
+    return null;
+  }
+
+  return perf;
 };
 
 export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
-  if (!isPerfEnabled()) {
+  const perf = getPerfApi();
+  if (perf === null) {
     return fn();
   }
 
@@ -21,13 +37,17 @@ export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
   const startMark = `${name}:start:${id}`;
   const endMark = `${name}:end:${id}`;
 
-  performance.mark(startMark);
+  if (id === 0) {
+    perf.clearMeasures(name);
+  }
+
+  perf.mark(startMark);
   try {
     return fn();
   } finally {
-    performance.mark(endMark);
-    performance.measure(name, startMark, endMark);
-    performance.clearMarks(startMark);
-    performance.clearMarks(endMark);
+    perf.mark(endMark);
+    perf.measure(name, startMark, endMark);
+    perf.clearMarks(startMark);
+    perf.clearMarks(endMark);
   }
 };
