@@ -1,25 +1,13 @@
-import { fireEvent } from "@testing-library/react";
 import { homePageStyleConfig } from "../../../app/editor/layoutStyles";
 
-const setOverflowMetrics = (
-  element: HTMLElement,
-  clientHeight: number,
-  scrollHeight: number,
+const createOverflowPane = (
+  tagName: "aside" | "section",
+  testId: string,
+  overflowY: string,
 ) => {
-  Object.defineProperty(element, "clientHeight", {
-    configurable: true,
-    value: clientHeight,
-  });
-  Object.defineProperty(element, "scrollHeight", {
-    configurable: true,
-    value: scrollHeight,
-  });
-};
-
-const createOverflowPane = (tagName: "aside" | "section", testId: string) => {
   const pane = document.createElement(tagName);
   pane.setAttribute("data-testid", testId);
-  pane.style.overflowY = "auto";
+  pane.style.overflowY = overflowY;
 
   const filler = document.createElement("div");
   filler.style.height = "1600px";
@@ -38,7 +26,8 @@ describe("HomePage layout styles", () => {
       expect.objectContaining({
         flex: 1,
         minHeight: 0,
-        overflow: "hidden",
+        overflowX: "hidden",
+        overflowY: "hidden",
         gridTemplateRows: "minmax(0, 1fr)",
       }),
     );
@@ -99,33 +88,36 @@ describe("HomePage layout styles", () => {
     );
   });
 
-  it("keeps navigation and preview scrolling isolated when both panes overflow", () => {
+  it("documents pane overflow style wiring for scroll isolation", () => {
+    // jsdom does not implement real layout/scroll rendering. This contract test
+    // verifies we wire production overflow styles to both panes; browser-level
+    // scroll isolation should be validated with E2E coverage.
     const layout = document.createElement("div");
-    layout.style.height = "240px";
-    layout.style.overflow = "hidden";
+    Object.assign(layout.style, {
+      height: "240px",
+      overflowX: String(homePageStyleConfig.layout.overflowX),
+      overflowY: String(homePageStyleConfig.layout.overflowY),
+    });
 
-    const navPane = createOverflowPane("aside", "editor-nav");
-    const previewPane = createOverflowPane("section", "editor-preview");
+    const navPane = createOverflowPane(
+      "aside",
+      "editor-nav",
+      String(homePageStyleConfig.nav.overflowY),
+    );
+    const previewPane = createOverflowPane(
+      "section",
+      "editor-preview",
+      String(homePageStyleConfig.preview.overflowY),
+    );
 
     layout.append(navPane, previewPane);
     document.body.appendChild(layout);
 
-    setOverflowMetrics(navPane, 240, 1600);
-    setOverflowMetrics(previewPane, 240, 1800);
-
-    expect(navPane.scrollHeight).toBeGreaterThan(navPane.clientHeight);
-    expect(previewPane.scrollHeight).toBeGreaterThan(previewPane.clientHeight);
-
-    navPane.scrollTop = 220;
-    fireEvent.scroll(navPane);
-
-    expect(navPane.scrollTop).toBe(220);
-    expect(previewPane.scrollTop).toBe(0);
-
-    previewPane.scrollTop = 360;
-    fireEvent.scroll(previewPane);
-
-    expect(previewPane.scrollTop).toBe(360);
-    expect(navPane.scrollTop).toBe(220);
+    expect(layout.style.overflowX).toBe("hidden");
+    expect(layout.style.overflowY).toBe("hidden");
+    expect(navPane.style.overflowY).toBe("auto");
+    expect(previewPane.style.overflowY).toBe("auto");
+    expect(navPane.firstElementChild).not.toBeNull();
+    expect(previewPane.firstElementChild).not.toBeNull();
   });
 });

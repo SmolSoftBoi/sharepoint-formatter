@@ -20,6 +20,6 @@ The current editor experience makes long navigation and preview content compete 
 
 ## Impact
 
-- Affected code: `app/page.tsx` layout styles and potentially related shell/container styling.
+- Affected code: `app/page.tsx`, `app/components/AppShell.tsx` (`appShellStyleConfig`, `AppShellStyleSlots`), and `app/editor/layoutStyles.ts`.
 - Affected tests: editor layout and UX behaviour checks for section scrolling.
 - No API, data model, or dependency changes expected.

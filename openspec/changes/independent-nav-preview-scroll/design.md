@@ -1,8 +1,8 @@
 ## Context
 
-The editor view currently renders navigation and preview in two main sections, but the overall page layout still allows the document to become the primary scroll container. This creates friction when users need to switch between controls in navigation and results in preview while working on longer JSON and sample data content.
+The editor view currently renders navigation and preview in two main sections, but the overall page layout still allows the document to become the primary scroll container. This creates friction when users need to switch between controls in navigation and results in the preview pane being pushed out of view while working on longer JSON and sample data content.
 
-The change is scoped to layout behaviour in the existing Next.js + Fluent UI interface. No data model, API, schema, or persistence changes are required.
+The change is scoped to layout behaviour in the existing Next.js + Fluent UI. No data model, API, schema, or persistence changes are required.
 
 ## Goals / Non-Goals
 

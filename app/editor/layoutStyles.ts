@@ -11,7 +11,8 @@ export const homePageStyleConfig: Record<HomePageStyleSlots, GriffelStyle> = {
     gap: 0,
     alignItems: "stretch",
     minHeight: 0,
-    overflow: "hidden",
+    overflowX: "hidden",
+    overflowY: "hidden",
     "@media (max-width: 960px)": {
       flex: "none",
       gridTemplateColumns: "minmax(0, 1fr)",
