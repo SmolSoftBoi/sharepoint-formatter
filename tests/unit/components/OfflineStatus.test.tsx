@@ -56,8 +56,6 @@ describe("OfflineStatus", () => {
   });
 
   it("shows a checking state before receiving the connectivity status", () => {
-    subscribeOfflineStatusMock.mockImplementation(() => jest.fn());
-
     render(<OfflineStatus />);
 
     expect(screen.getByText("Checking status")).toBeInTheDocument();
