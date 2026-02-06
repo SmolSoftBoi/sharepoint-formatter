@@ -92,6 +92,20 @@ describe("withPerfMeasure", () => {
     expect(incompletePerformanceMock.clearMarks).not.toHaveBeenCalled();
   });
 
+  it("skips instrumentation when performance is fully unavailable", async () => {
+    process.env.NODE_ENV = "test";
+    Object.defineProperty(globalThis, "performance", {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+
+    const { withPerfMeasure } = await import("../../../app/lib/perf/perf");
+    const result = withPerfMeasure("spfmt:test", () => "ok");
+
+    expect(result).toBe("ok");
+  });
+
   it("still measures when the wrapped callback throws", async () => {
     process.env.NODE_ENV = "test";
     const performanceMock = installPerformanceMock();

@@ -33,6 +33,7 @@ export const withPerfMeasure = <T>(name: string, fn: () => T): T => {
   }
 
   const id = measureSequence;
+  // Keep the sequence bounded in long-lived sessions and intentionally reset at rollover.
   measureSequence = (measureSequence + 1) % PERF_MEASURE_SEQUENCE_MODULO;
   const startMark = `${name}:start:${id}`;
   const endMark = `${name}:end:${id}`;
