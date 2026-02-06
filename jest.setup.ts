@@ -8,8 +8,10 @@ class ResizeObserverMock {
   disconnect(): void {}
 }
 
-Object.defineProperty(globalThis, "ResizeObserver", {
-  configurable: true,
-  writable: true,
-  value: ResizeObserverMock,
-});
+if (typeof globalThis.ResizeObserver !== "function") {
+  Object.defineProperty(globalThis, "ResizeObserver", {
+    configurable: true,
+    writable: true,
+    value: ResizeObserverMock,
+  });
+}

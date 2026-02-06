@@ -88,12 +88,15 @@ describe("OfflineStatus", () => {
     subscribeOfflineStatusMock.mockImplementation(() => unsubscribe);
 
     const { unmount } = render(<OfflineStatus />);
-    const unsubscribeCallsBeforeUnmount = unsubscribe.mock.calls.length;
-    const teardownCallsBeforeUnmount = teardownOfflineCacheMock.mock.calls.length;
+    unsubscribe.mockClear();
+    teardownOfflineCacheMock.mockClear();
+
+    expect(unsubscribe).toHaveBeenCalledTimes(0);
+    expect(teardownOfflineCacheMock).toHaveBeenCalledTimes(0);
 
     unmount();
 
-    expect(unsubscribe).toHaveBeenCalledTimes(unsubscribeCallsBeforeUnmount + 1);
-    expect(teardownOfflineCacheMock).toHaveBeenCalledTimes(teardownCallsBeforeUnmount + 1);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+    expect(teardownOfflineCacheMock).toHaveBeenCalledTimes(1);
   });
 });
