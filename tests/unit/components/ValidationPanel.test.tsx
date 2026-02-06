@@ -28,7 +28,7 @@ describe("ValidationPanel", () => {
     render(<ValidationPanel errors={errors} />);
 
     expect(screen.getByText("Missing property")).toBeInTheDocument();
-    expect(screen.getByText("(/fields/0)")).toBeInTheDocument();
+    expect(screen.getByText(/\(\/fields\/0\)/)).toBeInTheDocument();
     expect(screen.getByText("Hint:")).toBeInTheDocument();
     expect(screen.getByText('Add required property "title".')).toBeInTheDocument();
     expect(screen.getByRole("alert")).toBeInTheDocument();

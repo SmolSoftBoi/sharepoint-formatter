@@ -12,6 +12,13 @@ type SubscribeArgs = Parameters<SubscribeFn>;
 
 type SubscribeListener = SubscribeArgs[0];
 
+const mockedOfflineCache = {
+  initOfflineCache: initOfflineCache as jest.MockedFunction<typeof initOfflineCache>,
+  subscribeOfflineStatus:
+    subscribeOfflineStatus as jest.MockedFunction<typeof subscribeOfflineStatus>,
+  teardownOfflineCache: teardownOfflineCache as jest.MockedFunction<typeof teardownOfflineCache>,
+};
+
 jest.mock("../../../app/lib/persistence/offlineCache", () => ({
   initOfflineCache: jest.fn(),
   subscribeOfflineStatus: jest.fn(),
@@ -19,14 +26,33 @@ jest.mock("../../../app/lib/persistence/offlineCache", () => ({
 }));
 
 describe("OfflineStatus", () => {
-  const initOfflineCacheMock = initOfflineCache as jest.MockedFunction<typeof initOfflineCache>;
-  const subscribeOfflineStatusMock =
-    subscribeOfflineStatus as jest.MockedFunction<typeof subscribeOfflineStatus>;
-  const teardownOfflineCacheMock =
-    teardownOfflineCache as jest.MockedFunction<typeof teardownOfflineCache>;
+  const { initOfflineCache: initOfflineCacheMock } = mockedOfflineCache;
+  const { subscribeOfflineStatus: subscribeOfflineStatusMock } = mockedOfflineCache;
+  const { teardownOfflineCache: teardownOfflineCacheMock } = mockedOfflineCache;
+
+  const mockStatusNotification = (nextStatus: boolean) => {
+    let listener: SubscribeListener | null = null;
+
+    subscribeOfflineStatusMock.mockImplementation((nextListener: SubscribeListener) => {
+      listener = nextListener;
+      return jest.fn();
+    });
+
+    initOfflineCacheMock.mockImplementation(() => {
+      if (listener) {
+        act(() => {
+          listener(nextStatus);
+        });
+      }
+    });
+  };
+
+  beforeEach(() => {
+    subscribeOfflineStatusMock.mockImplementation(() => jest.fn());
+  });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("shows a checking state before receiving the connectivity status", () => {
@@ -40,12 +66,7 @@ describe("OfflineStatus", () => {
   });
 
   it("renders the online state when the listener reports true", () => {
-    subscribeOfflineStatusMock.mockImplementation((listener: SubscribeListener) => {
-      act(() => {
-        listener(true);
-      });
-      return jest.fn();
-    });
+    mockStatusNotification(true);
 
     render(<OfflineStatus />);
 
@@ -54,12 +75,7 @@ describe("OfflineStatus", () => {
   });
 
   it("renders the offline state when the listener reports false", () => {
-    subscribeOfflineStatusMock.mockImplementation((listener: SubscribeListener) => {
-      act(() => {
-        listener(false);
-      });
-      return jest.fn();
-    });
+    mockStatusNotification(false);
 
     render(<OfflineStatus />);
 
