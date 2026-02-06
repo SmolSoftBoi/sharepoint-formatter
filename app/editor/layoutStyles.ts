@@ -31,6 +31,8 @@ export const homePageStyleConfig: Record<HomePageStyleSlots, GriffelStyle> = {
     borderRightColor: tokens.colorNeutralStroke4,
     overflowY: "auto",
     minHeight: 0,
+    // Keep pane children at intrinsic height so overflow becomes scrollable
+    // instead of compressing panel content inside the desktop split layout.
     "& > *": {
       flexShrink: 0,
     },
@@ -49,6 +51,7 @@ export const homePageStyleConfig: Record<HomePageStyleSlots, GriffelStyle> = {
     backgroundColor: tokens.colorNeutralBackground2,
     overflowY: "auto",
     minHeight: 0,
+    // Match nav behaviour so preview content also overflows and scrolls.
     "& > *": {
       flexShrink: 0,
     },
