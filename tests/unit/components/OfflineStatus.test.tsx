@@ -38,7 +38,7 @@ describe("OfflineStatus", () => {
       return jest.fn();
     });
 
-    initOfflineCacheMock.mockImplementation(() => {
+    initOfflineCacheMock.mockImplementation(async () => {
       if (listener) {
         act(() => {
           listener(nextStatus);
