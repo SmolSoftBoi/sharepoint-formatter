@@ -11,6 +11,10 @@ import {
 import { PanelCard } from "./PanelCard";
 import { sanitizeJsonString } from "../../lib/validation/sanitizeJson";
 import { withPerfMeasure } from "../../lib/perf/perf";
+import {
+  createDebouncedTask,
+  type DebouncedTask,
+} from "../utils/createDebouncedTask";
 
 type MonacoGlobal = typeof globalThis & {
   MonacoEnvironment?: {
@@ -29,6 +33,7 @@ const normalizeStringify = (input: unknown): string => {
   return typeof serialized === "string" ? serialized : "";
 };
 
+// 170ms avoids extra parse churn on short typing pauses while staying responsive.
 const DEFAULT_DEBOUNCE_MS = 170;
 
 export const JsonEditor = ({
@@ -46,24 +51,11 @@ export const JsonEditor = ({
   );
   const onValidJsonRef = useRef(onValidJson);
   const onParseErrorRef = useRef(onParseError);
-  const parseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const parseTaskRef = useRef<DebouncedTask<string> | null>(null);
   const pendingProgrammaticValueRef = useRef<string | null>(null);
 
   const scheduleParse = useCallback((raw: string) => {
-    if (parseTimerRef.current) {
-      clearTimeout(parseTimerRef.current);
-    }
-
-    parseTimerRef.current = setTimeout(() => {
-      parseTimerRef.current = null;
-      const result = withPerfMeasure("spfmt:json:parse", () => sanitizeJsonString(raw));
-      if (result.ok) {
-        onParseErrorRef.current(undefined);
-        onValidJsonRef.current(result.value);
-      } else {
-        onParseErrorRef.current(result.error);
-      }
-    }, DEFAULT_DEBOUNCE_MS);
+    parseTaskRef.current?.schedule(raw);
   }, []);
 
   useEffect(() => {
@@ -90,6 +82,20 @@ export const JsonEditor = ({
 
   useEffect(() => {
     let disposed = false;
+    parseTaskRef.current = createDebouncedTask<string>({
+      delayMs: DEFAULT_DEBOUNCE_MS,
+      onRun: (raw) => {
+        const result = withPerfMeasure("spfmt:json:parse", () =>
+          sanitizeJsonString(raw),
+        );
+        if (result.ok) {
+          onParseErrorRef.current(undefined);
+          onValidJsonRef.current(result.value);
+        } else {
+          onParseErrorRef.current(result.error);
+        }
+      },
+    });
 
     const setupEditor = async () => {
       if (!containerRef.current) {
@@ -150,10 +156,8 @@ export const JsonEditor = ({
 
     return () => {
       disposed = true;
-      if (parseTimerRef.current) {
-        clearTimeout(parseTimerRef.current);
-        parseTimerRef.current = null;
-      }
+      parseTaskRef.current?.dispose();
+      parseTaskRef.current = null;
       editorRef.current?.dispose();
     };
   }, [scheduleParse]);
